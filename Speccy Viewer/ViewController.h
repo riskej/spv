@@ -1,15 +1,19 @@
 //
 //  ViewController.h
-//  Speccy Viewer
+//  SpecViewT1
 //
-//  Created by Sergey Sharov on 08/01/15.
-//  Copyright (c) 2015 SimbolBit & Debris. All rights reserved.
+//  Created by riskej & trefi, 2015.
+//  Copyright (c) 2015 SimbolBit. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
 
+//- (void)handleOpenURL:(NSURL *)url;
+//- (void)convert6912Screen;
+
+@property NSData *currentData;
 
 @end
 

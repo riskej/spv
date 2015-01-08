@@ -14,6 +14,8 @@
 		0FA615371A5E664500DE7675 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0FA615361A5E664500DE7675 /* Images.xcassets */; };
 		0FA6153A1A5E664500DE7675 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0FA615381A5E664500DE7675 /* LaunchScreen.xib */; };
 		0FA615461A5E664500DE7675 /* Speccy_ViewerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615451A5E664500DE7675 /* Speccy_ViewerTests.m */; };
+		0FA615511A5E679200DE7675 /* RKJConverterToRGB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */; };
+		0FA615541A5E682400DE7675 /* splash_iphone5.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FA615531A5E682400DE7675 /* splash_iphone5.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +42,9 @@
 		0FA6153F1A5E664500DE7675 /* Speccy ViewerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Speccy ViewerTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FA615441A5E664500DE7675 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FA615451A5E664500DE7675 /* Speccy_ViewerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Speccy_ViewerTests.m; sourceTree = "<group>"; };
+		0FA6154F1A5E679200DE7675 /* RKJConverterToRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RKJConverterToRGB.h; sourceTree = "<group>"; };
+		0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RKJConverterToRGB.m; sourceTree = "<group>"; };
+		0FA615531A5E682400DE7675 /* splash_iphone5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash_iphone5.png; path = Files/splash_iphone5.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +68,7 @@
 		0FA6151D1A5E664500DE7675 = {
 			isa = PBXGroup;
 			children = (
+				0FA615521A5E681700DE7675 /* Files */,
 				0FA615281A5E664500DE7675 /* Speccy Viewer */,
 				0FA615421A5E664500DE7675 /* Speccy ViewerTests */,
 				0FA615271A5E664500DE7675 /* Products */,
@@ -83,6 +89,8 @@
 			children = (
 				0FA6152D1A5E664500DE7675 /* AppDelegate.h */,
 				0FA6152E1A5E664500DE7675 /* AppDelegate.m */,
+				0FA6154F1A5E679200DE7675 /* RKJConverterToRGB.h */,
+				0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */,
 				0FA615301A5E664500DE7675 /* ViewController.h */,
 				0FA615311A5E664500DE7675 /* ViewController.m */,
 				0FA615331A5E664500DE7675 /* Main.storyboard */,
@@ -117,6 +125,14 @@
 				0FA615441A5E664500DE7675 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0FA615521A5E681700DE7675 /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				0FA615531A5E682400DE7675 /* splash_iphone5.png */,
+			);
+			name = Files;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +184,7 @@
 				TargetAttributes = {
 					0FA615251A5E664500DE7675 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 7B9A56ZSUK;
 					};
 					0FA6153E1A5E664500DE7675 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -202,6 +219,7 @@
 				0FA615351A5E664500DE7675 /* Main.storyboard in Resources */,
 				0FA6153A1A5E664500DE7675 /* LaunchScreen.xib in Resources */,
 				0FA615371A5E664500DE7675 /* Images.xcassets in Resources */,
+				0FA615541A5E682400DE7675 /* splash_iphone5.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,6 +240,7 @@
 				0FA615321A5E664500DE7675 /* ViewController.m in Sources */,
 				0FA6152F1A5E664500DE7675 /* AppDelegate.m in Sources */,
 				0FA6152C1A5E664500DE7675 /* main.m in Sources */,
+				0FA615511A5E679200DE7675 /* RKJConverterToRGB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -345,7 +364,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -355,7 +376,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -414,6 +437,7 @@
 				0FA6154B1A5E664500DE7675 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0FA6154C1A5E664500DE7675 /* Build configuration list for PBXNativeTarget "Speccy ViewerTests" */ = {
 			isa = XCConfigurationList;
@@ -422,6 +446,7 @@
 				0FA6154E1A5E664500DE7675 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

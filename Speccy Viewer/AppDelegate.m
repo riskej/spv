@@ -1,12 +1,13 @@
 //
 //  AppDelegate.m
-//  Speccy Viewer
+//  SpecViewT1
 //
-//  Created by Sergey Sharov on 08/01/15.
-//  Copyright (c) 2015 SimbolBit & Debris. All rights reserved.
+//  Created by riskej & trefi, 2015.
+//  Copyright (c) 2015 SimbolBit. All rights reserved.
 //
 
 #import "AppDelegate.h"
+#import "ViewController.h"
 
 @interface AppDelegate ()
 
@@ -14,11 +15,33 @@
 
 @implementation AppDelegate
 
+@synthesize window, IncomingURL;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    
+    NSLog(@"App is active!");
+    
+    //    ViewController *_ViewController;
+    //    _ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    
+    return YES;
+    
+}
+
+
+-(BOOL) application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    //    ViewController *_ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    //    ViewController *_ViewController;
+    
+    if (url != nil && [url isFileURL]) {
+        IncomingURL = url;
+        //        _ViewController.currentData = [NSData dataWithContentsOfURL:url];
+        //        [_ViewController convert6912Screen];
+    }
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -35,7 +58,18 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+    
+    //    NSLog(@"App did become active!");
+    
+    NSLog(@"Incoming URL: %@", IncomingURL);
+    
+    //    ViewController *_ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    //    _ViewController.currentData = [NSData dataWithContentsOfURL:IncomingURL];
+    //    [_ViewController.navigationController pushViewController:_ViewController animated:YES];
+    //    [_ViewController.navigationController setViewControllers:@[_ViewController] animated:YES];
+    
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
