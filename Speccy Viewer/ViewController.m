@@ -17,7 +17,11 @@
 @implementation ViewController
 
 {
+    NSUInteger incomingFileSize;
+    UIImage *image01;
+    UIImage *image02;
     BOOL check;
+    BOOL isNoflicMode;
     CADisplayLink *theTimer;
     UIPinchGestureRecognizer *pinchRecognizer;
     UIImageView *flickerImages;
@@ -99,31 +103,23 @@
     
     [self getBorderColors];
     
-    BorderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    BorderToShow.backgroundColor = borderColorScreen01;
-    BorderToShow.alpha = 1;
-    BorderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    BorderToShow2.backgroundColor = borderColorScreen02;
-    BorderToShow2.alpha = 0.5;
+    if (incomingFileSize != 13824) {
+        BorderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        BorderToShow.backgroundColor = borderColorScreen01;
+        BorderToShow.alpha = 1;
+        BorderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        BorderToShow2.backgroundColor = borderColorScreen02;
+        BorderToShow2.alpha = 0.5;
     
-    [self.view addSubview:BorderToShow];
-    [self.view addSubview:BorderToShow2];
+        [self.view addSubview:BorderToShow];
+        [self.view addSubview:BorderToShow2];
+    }
     
-//    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-//    ScreenToShow.image = convertedImage.FinallyProcessedImage;
-//    ScreenToShow.alpha = 1.0;
-//    ScreenToShow.transform = CGAffineTransformMakeScale(1, 1);
-//    
-//    
-//    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-//    ScreenToShow2.image = convertedImage.FinallyProcessedImage2;
-//    ScreenToShow2.alpha = 0.5;
-//    ScreenToShow2.transform = CGAffineTransformMakeScale(1, 1);
-//    
-//    [self.view addSubview:ScreenToShow];
-//    [self.view addSubview:ScreenToShow2];
+    image01 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage2;
     
-        [self initializeTimer];
+    isNoflicMode = NO;
+    [self showFlickeringPicture];
     
 }
 
@@ -148,19 +144,11 @@
     [self.view addSubview:BorderToShow];
     [self.view addSubview:BorderToShow2];
     
-    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow.alpha = 1.0;
-    ScreenToShow.transform = CGAffineTransformMakeScale(1, 1);
+    image01 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage2;
     
-    
-    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow2.image = convertedImage.FinallyProcessedImage2;
-    ScreenToShow2.alpha = 0.5;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1, 1);
-    
-    [self.view addSubview:ScreenToShow];
-    [self.view addSubview:ScreenToShow2];
+    isNoflicMode = NO;
+    [self showFlickeringPicture];
     
 //        [self initializeTimer];
     
@@ -232,7 +220,7 @@
     //    Byte *byteData = (Byte*)malloc(len);
     //    memcpy(byteData, [data bytes], len);
     
-    NSUInteger incomingFileSize = [currentData length];
+    incomingFileSize = [currentData length];
     
     //    NSLog(@"Incfileszie: %i", (int)incomingFileSize);
     
@@ -371,31 +359,67 @@
 
 -(void)flickerMode {
     
-    if (!check) {
-        
-        RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-        [convertedImage openZX_img_mgX:currentData];
-        
-        UIImage *image01 = convertedImage.FinallyProcessedImage;
-        UIImage *image02 = convertedImage.FinallyProcessedImage2;
-        
-        flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-        flickerImages.animationImages = [NSArray arrayWithObjects:
-                                         image01, image02,
-                                         nil];
-        
-        flickerImages.animationDuration = 0.01;
-        flickerImages.animationRepeatCount = 0;
-        [flickerImages startAnimating];
-        
-        [self.view addSubview:flickerImages];
-        
-        check = YES;
-    }
-//    HI Riskeyushka!
-//    Chat
+
+    [self.view addSubview :ScreenToShow];
+//    [ScreenToShow removeFromSuperview];
+    
+    [self.view addSubview:ScreenToShow2];
+//    [ScreenToShow2 removeFromSuperview];
     
     
 }
+
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+
+//    UITouch *touch = [[event allTouches] anyObject];
+//    CGPoint touchCoordinates = [touch locationInView:self.view];
+    
+    if (!isNoflicMode) {
+        [flickerImages removeFromSuperview];
+        [self showNoflicPicture];
+        isNoflicMode = YES;
+    }
+}
+
+
+-(void)showNoflicPicture {
+    
+    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+    [convertedImage openZX_img_mgX:currentData];
+    
+    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    ScreenToShow.image = image01;
+    ScreenToShow.alpha = 1.0;
+    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    
+    
+    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    ScreenToShow2.image = image02;
+    ScreenToShow2.alpha = 0.5;
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    
+    [self.view addSubview:ScreenToShow];
+    [self.view addSubview:ScreenToShow2];
+    
+}
+
+
+-(void) showFlickeringPicture {
+    
+    flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    flickerImages.animationImages = [NSArray arrayWithObjects:
+                                     image01, image02,
+                                     nil];
+    
+    flickerImages.animationDuration = 0.01;
+    flickerImages.animationRepeatCount = 0;
+    flickerImages.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    [flickerImages startAnimating];
+    
+    [self.view addSubview:flickerImages];
+    
+}
+
 
 @end
