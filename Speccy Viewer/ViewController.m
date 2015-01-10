@@ -52,14 +52,19 @@
     
     self.view.backgroundColor = [UIColor blackColor];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkingForFileSize)
-                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
+    UIImage *testImage = [UIImage imageNamed:@"midway.png"];
+    [imageToConvert convertPNGtoSCR:testImage];
     
-    [self setupTouchInterface];
+    currentData = imageToConvert.convertedScrData01;
+    [self convert6912Screen:2];
+
     
+//    [[NSNotificationCenter defaultCenter] addObserver:self
+//                                             selector:@selector(checkingForFileSize)
+//                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
     
-    //    currentData = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"https://dl.dropboxusercontent.com/u/36464659/_apptest/stl13824.img"]];
+//    [self setupTouchInterface];
     
 }
 

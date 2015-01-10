@@ -18,6 +18,7 @@
 		0F5B9A591A615D2E00C3BDC2 /* btn_share@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */; };
 		0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A5A1A6172E400C3BDC2 /* Security.framework */; };
 		0F5B9A5E1A61757000C3BDC2 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A5D1A61757000C3BDC2 /* DropboxSDK.framework */; };
+		0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A5F1A619A0400C3BDC2 /* midway.png */; };
 		0FA6152C1A5E664500DE7675 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152B1A5E664500DE7675 /* main.m */; };
 		0FA6152F1A5E664500DE7675 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152E1A5E664500DE7675 /* AppDelegate.m */; };
 		0FA615321A5E664500DE7675 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615311A5E664500DE7675 /* ViewController.m */; };
@@ -52,6 +53,7 @@
 		0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_share@2x.png"; path = "Files/btn_share@2x.png"; sourceTree = "<group>"; };
 		0F5B9A5A1A6172E400C3BDC2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		0F5B9A5D1A61757000C3BDC2 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
+		0F5B9A5F1A619A0400C3BDC2 /* midway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midway.png; path = Files/midway.png; sourceTree = "<group>"; };
 		0FA615261A5E664500DE7675 /* Speccy Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Speccy Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FA6152A1A5E664500DE7675 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FA6152B1A5E664500DE7675 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 		0FA615521A5E681700DE7675 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				0F5B9A5F1A619A0400C3BDC2 /* midway.png */,
 				0F5B9A561A615D2E00C3BDC2 /* btn_saveSCR@2x.png */,
 				0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */,
 				0F5B9A541A615C5600C3BDC2 /* btn_savePNG@2x.png */,
@@ -288,6 +291,7 @@
 				0F5B9A531A615B0500C3BDC2 /* btn_saveToCamerRoll@2x.png in Resources */,
 				0F5B9A551A615C5600C3BDC2 /* btn_savePNG@2x.png in Resources */,
 				0FA6153A1A5E664500DE7675 /* LaunchScreen.xib in Resources */,
+				0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */,
 				0F5B9A511A61426400C3BDC2 /* btn_menu@2x.png in Resources */,
 				0FA615371A5E664500DE7675 /* Images.xcassets in Resources */,
 				0FA615541A5E682400DE7675 /* splash_iphone5.png in Resources */,

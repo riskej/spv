@@ -22,6 +22,7 @@
     BOOL nextLineForAttrs;
 }
 
+@synthesize convertedScrData01;
 @synthesize mode_scr;
 @synthesize FinallyProcessedImage;
 @synthesize FinallyProcessedImage2;
