@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
+#import <DropboxSDK/DropboxSDK.h>
 
 @interface AppDelegate ()
 
@@ -19,10 +20,11 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
-    NSLog(@"App is active!");
-    
-    //    ViewController *_ViewController;
-    //    _ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+    DBSession *dbSession = [[DBSession alloc]
+                            initWithAppKey:@"6ta68odfvpkhxe2"
+                            appSecret:@"9tcjf8c6r7yx14g"
+                            root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
+    [DBSession setSharedSession:dbSession];
     
     return YES;
     
@@ -39,7 +41,17 @@
         //        _ViewController.currentData = [NSData dataWithContentsOfURL:url];
         //        [_ViewController convert6912Screen];
     }
+    
+    if ([[DBSession sharedSession] handleOpenURL:url]) {
+        if ([[DBSession sharedSession] isLinked]) {
+            NSLog(@"App linked successfully!");
+            // At this point you can start making API calls
+        }
+        return YES;
+    }
+    // Add whatever other url handling code your app requires here
     return YES;
+    
 }
 
 
@@ -75,5 +87,6 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end

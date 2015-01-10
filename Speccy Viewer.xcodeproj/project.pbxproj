@@ -18,6 +18,7 @@
 		0F5B9A591A615D2E00C3BDC2 /* btn_share@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */; };
 		0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A5A1A6172E400C3BDC2 /* Security.framework */; };
 		0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A5F1A619A0400C3BDC2 /* midway.png */; };
+		0F5B9A621A61B52A00C3BDC2 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */; };
 		0FA6152C1A5E664500DE7675 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152B1A5E664500DE7675 /* main.m */; };
 		0FA6152F1A5E664500DE7675 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152E1A5E664500DE7675 /* AppDelegate.m */; };
 		0FA615321A5E664500DE7675 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615311A5E664500DE7675 /* ViewController.m */; };
@@ -52,6 +53,7 @@
 		0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_share@2x.png"; path = "Files/btn_share@2x.png"; sourceTree = "<group>"; };
 		0F5B9A5A1A6172E400C3BDC2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		0F5B9A5F1A619A0400C3BDC2 /* midway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midway.png; path = Files/midway.png; sourceTree = "<group>"; };
+		0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
 		0FA615261A5E664500DE7675 /* Speccy Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Speccy Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FA6152A1A5E664500DE7675 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FA6152B1A5E664500DE7675 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */,
 				0F32AF141A611A5A0049E46F /* UIKit.framework in Frameworks */,
 				0F32AF121A611A4D0049E46F /* CoreGraphics.framework in Frameworks */,
+				0F5B9A621A61B52A00C3BDC2 /* DropboxSDK.framework in Frameworks */,
 				0F32AF101A611A400049E46F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -105,6 +108,7 @@
 		0F32AF151A611A640049E46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */,
 				0F5B9A5A1A6172E400C3BDC2 /* Security.framework */,
 				0F32AF131A611A5A0049E46F /* UIKit.framework */,
 				0F32AF111A611A4D0049E46F /* CoreGraphics.framework */,

@@ -10,9 +10,10 @@
 #import "RKJConverterToRGB.h"
 #import "AppDelegate.h"
 #import "CNPGridMenu.h"
+#import <DropboxSDK/DropboxSDK.h>
 
-@interface ViewController () <CNPGridMenuDelegate>
-
+@interface ViewController () <CNPGridMenuDelegate, DBRestClientDelegate>
+@property (nonatomic, strong) DBRestClient *restClient;
 @property (nonatomic, strong) CNPGridMenu *gridMenu;
 
 @end
@@ -50,21 +51,25 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // Dropbox init
+    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+    self.restClient.delegate = self;
+    
     self.view.backgroundColor = [UIColor blackColor];
     
-    RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
-    UIImage *testImage = [UIImage imageNamed:@"midway.png"];
-    [imageToConvert convertPNGtoSCR:testImage];
-    
-    currentData = imageToConvert.convertedSpeccyScr01;
-    [self convert6912Screen:2];
+//    RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
+//    UIImage *testImage = [UIImage imageNamed:@"midway.png"];
+//    [imageToConvert convertPNGtoSCR:testImage];
+//    
+//    currentData = imageToConvert.convertedSpeccyScr01;
+//    [self convert6912Screen:2];
 
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self
-//                                             selector:@selector(checkingForFileSize)
-//                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(checkingForFileSize)
+                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
     
-//    [self setupTouchInterface];
+    [self setupTouchInterface];
     
 }
 
@@ -472,7 +477,7 @@
     
     CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
     i03.icon = [UIImage imageNamed:@"btn_saveToCamerRoll@2x"];
-    i03.title = @"Save to Camera Roll";
+    i03.title = @"Open file from Dropbox";
     
     CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
     i04.icon = [UIImage imageNamed:@"btn_share@2x"];
@@ -482,7 +487,7 @@
     i05.icon = [UIImage imageNamed:@"btn_menu@2x"];
     i05.title = @"About";
     
-    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i02, i03, i04, i05]];
+    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i03, i01, i02, i04, i05]];
     gridMenu.delegate = self;
     [self presentGridMenu:gridMenu animated:YES completion:^{
         NSLog(@"Grid Menu Presented");
@@ -499,11 +504,62 @@
     [self dismissGridMenuAnimated:YES completion:^{
         NSLog(@"Grid Menu Did Tap On Item: %@", item.title);
         
-        if ([item.title isEqual: @"Save to Camera Roll"])
-            [self saveImageToCameraRoll];
+        if ([item.title isEqual: @"Open file from Dropbox"]) {
+         
+//            NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+//            
+//            NSString *destDir = @"/SpeccyViewer/";
+//            [self.restClient loadFile:destDir intoPath:localDir];
+            
+        }
         
         else if ([item.title isEqual: @"Share Image"])
             [self shareImage];
+        
+        else if ([item.title isEqual: @"Save *.png to Dropbox"]) {
+            
+            [self didPressLink];
+        
+            if (image01 != nil) {
+
+            CGSize newSize = CGSizeMake(512, 384);
+            UIGraphicsBeginImageContext( newSize );
+        
+            [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+            [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+        
+            UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+            UIGraphicsEndImageContext();
+            
+            NSData *noflicImageData = UIImagePNGRepresentation(noflicImage);
+        
+            NSString *filename = @"Picture.png";
+            NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+            NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+            [noflicImageData writeToFile:localPath atomically:YES];
+        
+            NSString *destDir = @"/SpeccyViewer/";
+            [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+        }
+        }
+        
+        else if ([item.title isEqual: @"Save *.scr to Dropbox"]) {
+            
+            [self didPressLink];
+            
+            if (currentData != nil) {
+                
+                NSData *noflicImageData = currentData;
+                
+                NSString *filename = @"Picture.scr";
+                NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+                NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+                [noflicImageData writeToFile:localPath atomically:YES];
+                
+                NSString *destDir = @"/SpeccyViewer/";
+                [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+            }
+        }
         
     }];
 }
@@ -548,7 +604,7 @@
     
     if (image01 != nil) {
         
-        CGSize newSize = CGSizeMake(256, 192);
+        CGSize newSize = CGSizeMake(512, 384);
         UIGraphicsBeginImageContext( newSize );
         
         [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
@@ -561,10 +617,10 @@
     if (!shareScoresController)
     {
         UIImage * shareImage = noflicImage;
-        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], shareImage, nil];
+        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], shareImage, currentData, nil];
         
         shareScoresController = [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
-        shareScoresController.excludedActivityTypes = [NSArray arrayWithObjects: UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, nil];
+        shareScoresController.excludedActivityTypes = [NSArray arrayWithObjects: UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, nil];
     }
     
     [self presentViewController: shareScoresController animated:YES completion:nil];
@@ -572,5 +628,59 @@
     }
 
 }
+
+
+- (void)didPressLink {
+    if (![[DBSession sharedSession] isLinked]) {
+        [[DBSession sharedSession] linkFromController:self];
+    }
+}
+
+
+- (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath
+              from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"File saved succesfully"
+                                                    message:@"Please check ../SpeccyViewer folder in your Dropbox"
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
+    NSLog(@"File uploaded successfully to path: %@", metadata.path);
+}
+
+
+- (void)restClient:(DBRestClient *)client uploadFileFailedWithError:(NSError *)error {
+    NSLog(@"File upload failed with error: %@", error);
+}
+
+
+- (void)restClient:(DBRestClient *)client loadedMetadata:(DBMetadata *)metadata {
+    if (metadata.isDirectory) {
+        NSLog(@"Folder '%@' contains:", metadata.path);
+        for (DBMetadata *file in metadata.contents) {
+            NSLog(@"	%@", file.filename);
+        }
+    }
+}
+
+
+- (void)restClient:(DBRestClient *)client
+loadMetadataFailedWithError:(NSError *)error {
+    NSLog(@"Error loading metadata: %@", error);
+}
+
+
+- (void)restClient:(DBRestClient *)client loadedFile:(NSString *)localPath
+       contentType:(NSString *)contentType metadata:(DBMetadata *)metadata {
+    NSLog(@"File loaded into path: %@", localPath);
+}
+
+
+- (void)restClient:(DBRestClient *)client loadFileFailedWithError:(NSError *)error {
+    NSLog(@"There was an error loading the file: %@", error);
+}
+
 
 @end
