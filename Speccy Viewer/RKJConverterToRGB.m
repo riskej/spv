@@ -167,7 +167,7 @@
     }
     CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
-                                                 kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
+                                                 kCGImageAlphaNone | kCGBitmapByteOrder32Big);
     
     CGImageRef newCGImage = CGBitmapContextCreateImage(context);
     CGContextDrawImage(context, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage);
@@ -562,6 +562,20 @@
     
     // 4.
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
+    
+    
+    // code routine here
+    NSData *convertedScrData;
+    NSUInteger len = 6912;
+    Byte *byteData = (Byte*)malloc(len);
+    
+    //converter
+    byteData[01] = 12;
+    
+    //create new image based on new data
+    memcpy(byteData, [convertedScrData bytes], len);
+    
+    convertedScrData01 = convertedScrData;
     
     // 5. Cleanup
     CGColorSpaceRelease(colorSpace);
