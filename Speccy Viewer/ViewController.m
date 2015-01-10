@@ -80,7 +80,7 @@
 
     ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow2.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);[self.view addSubview:ScreenToShow];
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:ScreenToShow];
     [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
@@ -106,7 +106,7 @@
     
     ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow2.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);[self.view addSubview:ScreenToShow];
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:ScreenToShow];
     [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
@@ -405,7 +405,7 @@
 //    UITouch *touch = [[event allTouches] anyObject];
 //    CGPoint touchCoordinates = [touch locationInView:self.view];
     
-    if (!isNoflicMode) {
+    if (!isNoflicMode && incomingFileSize > 12288 && image01 != nil) {
         [flickerImages removeFromSuperview];
         [self showNoflicPicture];
         isNoflicMode = YES;
