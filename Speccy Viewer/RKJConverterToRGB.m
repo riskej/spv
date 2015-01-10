@@ -540,4 +540,32 @@
 //    from Trefyushka
 }
 
+
+-(void) convertPNGtoSCR:(UIImage *)inputImage {
+    
+    CGImageRef inputCGImage = [inputImage CGImage];
+    NSUInteger width = CGImageGetWidth(inputCGImage);
+    NSUInteger height = CGImageGetHeight(inputCGImage);
+    
+    // 2.
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bytesPerRow = bytesPerPixel * width;
+    NSUInteger bitsPerComponent = 8;
+    
+    UInt32 * pixels;
+    pixels = (UInt32 *) calloc(height * width, sizeof(UInt32));
+    
+    // 3.
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef context = CGBitmapContextCreate(pixels, width, height, bitsPerComponent, bytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast | kCGBitmapByteOrder32Big);
+    
+    // 4.
+    CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
+    
+    // 5. Cleanup
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+}
+
 @end

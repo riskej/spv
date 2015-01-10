@@ -9,14 +9,19 @@
 #import "ViewController.h"
 #import "RKJConverterToRGB.h"
 #import "AppDelegate.h"
+#import "CNPGridMenu.h"
 
-@interface ViewController ()
+@interface ViewController () <CNPGridMenuDelegate>
+
+@property (nonatomic, strong) CNPGridMenu *gridMenu;
 
 @end
 
 @implementation ViewController
 
 {
+    UIActivityViewController *shareScoresController;
+    UIButton *mainMenu;
     NSUInteger incomingFileSize;
     UIImage *image01;
     UIImage *image02;
@@ -53,6 +58,7 @@
     
     [self setupTouchInterface];
     
+    
     //    currentData = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"https://dl.dropboxusercontent.com/u/36464659/_apptest/stl13824.img"]];
     
 }
@@ -65,13 +71,21 @@
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
     [convertedImage openZX_scr6144:currentData];
+    image01 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage;
     
     ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    
     ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+
+    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    ScreenToShow2.image = convertedImage.FinallyProcessedImage;
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);[self.view addSubview:ScreenToShow];
     
     [self.view addSubview:ScreenToShow];
+    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
+    [self.view addSubview:ScreenToShow2];
+    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
 }
 
 
@@ -83,12 +97,22 @@
     convertedImage.mode_scr=mode_scr;
     [convertedImage openZX_scr6912:currentData];
     
+    image01 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage;
+    
     ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    
     ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
+    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    ScreenToShow2.image = convertedImage.FinallyProcessedImage;
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);[self.view addSubview:ScreenToShow];
+    
     [self.view addSubview:ScreenToShow];
+    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
+    [self.view addSubview:ScreenToShow2];
+    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    
 }
 
 
@@ -112,7 +136,9 @@
         BorderToShow2.alpha = 0.5;
     
         [self.view addSubview:BorderToShow];
+        [self.view insertSubview:BorderToShow belowSubview:mainMenu];
         [self.view addSubview:BorderToShow2];
+        [self.view insertSubview:BorderToShow2 belowSubview:mainMenu];
     }
     
     image01 = convertedImage.FinallyProcessedImage;
@@ -142,7 +168,9 @@
     BorderToShow2.alpha = 0.5;
     
     [self.view addSubview:BorderToShow];
+    [self.view insertSubview:BorderToShow belowSubview:mainMenu];
     [self.view addSubview:BorderToShow2];
+    [self.view insertSubview:BorderToShow2 belowSubview:mainMenu];
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
@@ -210,6 +238,8 @@
     {
         [view removeFromSuperview];
     }
+    
+    [self addButtons];
     
     AppDelegate * appDelegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
     currentData = [NSData dataWithContentsOfURL:appDelegate.IncomingURL];
@@ -393,14 +423,17 @@
     ScreenToShow.alpha = 1.0;
     ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    
     ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow2.image = image02;
     ScreenToShow2.alpha = 0.5;
     ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:ScreenToShow];
+    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
     [self.view addSubview:ScreenToShow2];
+    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+
+//    [self showMenu];
     
 }
 
@@ -421,5 +454,118 @@
     
 }
 
+
+- (void)showMenu {
+    
+    CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
+    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+    i01.title = @"Save *.png to Dropbox";
+    
+    CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
+    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+    i02.title = @"Save *.scr to Dropbox";
+    
+    CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
+    i03.icon = [UIImage imageNamed:@"btn_saveToCamerRoll@2x"];
+    i03.title = @"Save to Camera Roll";
+    
+    CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
+    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
+    i04.title = @"Share Image";
+    
+    CNPGridMenuItem *i05 = [[CNPGridMenuItem alloc] init];
+    i05.icon = [UIImage imageNamed:@"btn_menu@2x"];
+    i05.title = @"About";
+    
+    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i02, i03, i04, i05]];
+    gridMenu.delegate = self;
+    [self presentGridMenu:gridMenu animated:YES completion:^{
+        NSLog(@"Grid Menu Presented");
+    }];
+}
+
+- (void)gridMenuDidTapOnBackground:(CNPGridMenu *)menu {
+    [self dismissGridMenuAnimated:YES completion:^{
+        NSLog(@"Grid Menu Dismissed With Background Tap");
+    }];
+}
+
+- (void)gridMenu:(CNPGridMenu *)menu didTapOnItem:(CNPGridMenuItem *)item {
+    [self dismissGridMenuAnimated:YES completion:^{
+        NSLog(@"Grid Menu Did Tap On Item: %@", item.title);
+        
+        if ([item.title isEqual: @"Save to Camera Roll"])
+            [self saveImageToCameraRoll];
+        
+        else if ([item.title isEqual: @"Share Image"])
+            [self shareImage];
+        
+    }];
+}
+
+
+-(void) addButtons {
+    
+    mainMenu = [UIButton buttonWithType:UIButtonTypeCustom];
+    [mainMenu addTarget:self
+               action:@selector(showMenu)
+     forControlEvents:UIControlEventTouchUpInside];
+   
+    [mainMenu setImage:[UIImage imageNamed:@"btn_menu.png"] forState:UIControlStateNormal];
+    mainMenu.frame = CGRectMake(0, 0, 80.0, 60.0);
+    
+    [self.view addSubview:mainMenu];
+    [self.view insertSubview:mainMenu aboveSubview:BorderToShow2];
+    
+}
+
+
+-(void) saveImageToCameraRoll {
+    
+    if (image01 != nil) {
+    
+    CGSize newSize = CGSizeMake(256, 192);
+    UIGraphicsBeginImageContext( newSize );
+    
+    [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+    
+    UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    UIImageWriteToSavedPhotosAlbum(noflicImage, nil, nil, nil);
+        
+    }
+}
+
+
+-(void) shareImage {
+    
+    if (image01 != nil) {
+        
+        CGSize newSize = CGSizeMake(256, 192);
+        UIGraphicsBeginImageContext( newSize );
+        
+        [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+        [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+        
+        UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    
+    
+    if (!shareScoresController)
+    {
+        UIImage * shareImage = noflicImage;
+        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], shareImage, nil];
+        
+        shareScoresController = [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
+        shareScoresController.excludedActivityTypes = [NSArray arrayWithObjects: UIActivityTypePrint, UIActivityTypeSaveToCameraRoll, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, nil];
+    }
+    
+    [self presentViewController: shareScoresController animated:YES completion:nil];
+
+    }
+
+}
 
 @end

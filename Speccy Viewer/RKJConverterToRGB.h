@@ -21,4 +21,5 @@
 - (void) openZX_scr6912:(NSData*)datafile;
 - (void) openZX_img_mgX:(NSData*)datafile;
 - (void) openZX_img_mg1:(NSData*)datafile;
+
 @end
