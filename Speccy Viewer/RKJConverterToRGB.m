@@ -22,7 +22,7 @@
     BOOL nextLineForAttrs;
 }
 
-@synthesize convertedScrData01;
+@synthesize convertedSpeccyScr01;
 @synthesize mode_scr;
 @synthesize FinallyProcessedImage;
 @synthesize FinallyProcessedImage2;
@@ -167,7 +167,7 @@
     }
     CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
-                                                 kCGImageAlphaNone | kCGBitmapByteOrder32Big);
+                                                 kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
     
     CGImageRef newCGImage = CGBitmapContextCreateImage(context);
     CGContextDrawImage(context, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage);
@@ -565,17 +565,19 @@
     
     
     // code routine here
-    NSData *convertedScrData;
     NSUInteger len = 6912;
     Byte *byteData = (Byte*)malloc(len);
     
+    
     //converter
-    byteData[01] = 12;
+    for (int i = 0; i < 6912; i++) {
+        byteData[i] = 12;
+    }
     
-    //create new image based on new data
-    memcpy(byteData, [convertedScrData bytes], len);
     
-    convertedScrData01 = convertedScrData;
+    // create new image based on new data
+    convertedSpeccyScr01 = [NSData dataWithBytes:(const void *)byteData length:len];
+    
     
     // 5. Cleanup
     CGColorSpaceRelease(colorSpace);

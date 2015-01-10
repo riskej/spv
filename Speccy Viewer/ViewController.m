@@ -56,7 +56,7 @@
     UIImage *testImage = [UIImage imageNamed:@"midway.png"];
     [imageToConvert convertPNGtoSCR:testImage];
     
-    currentData = imageToConvert.convertedScrData01;
+    currentData = imageToConvert.convertedSpeccyScr01;
     [self convert6912Screen:2];
 
     

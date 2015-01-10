@@ -10,7 +10,7 @@
 
 @interface RKJConverterToRGB : UIImage
 
-@property NSData* convertedScrData01;
+@property NSData* convertedSpeccyScr01;
 @property int mode_scr;
 @property (strong, nonatomic) UIImage *FinallyProcessedImage;
 @property (strong, nonatomic) UIImage *FinallyProcessedImage2;
