@@ -542,7 +542,7 @@
 }
 
 
--(void) convertPNGtoSCR:(UIImage *)inputImage {
+- (void) convertPNGtoSCR:(UIImage *)inputImage {
     
     CGImageRef inputCGImage = [inputImage CGImage];
     NSUInteger width = CGImageGetWidth(inputCGImage);
@@ -563,26 +563,134 @@
     // 4.
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
     
-    
     // code routine here
+    Byte *colBuf = (Byte*)malloc(64);
+    Byte *sortCol = (Byte*)malloc(64);
+    Byte *cntCol = (Byte*)malloc(64);
     NSUInteger len = 6912;
     Byte *byteData = (Byte*)malloc(len);
-    
-    
+    int col=0;
+    int colR,colG,colB;
     //converter
-    for (int i = 0; i < 6912; i++) {
-        byteData[i] = 12;
+    
+    for (int chars=0; chars<768; chars++) {
+        int pixs=((chars & 768) << 3) + (chars & 255);
+        int atr=6144 + chars;
+        int png=(chars>>5)*256*8 + (chars & 31)*8;
+        int ix=0;
+        for (int ypix=0; ypix<8;ypix++) {
+            
+            for (int xpix=0; xpix<8;xpix++) {
+                int pix=pixels[png+ypix*256+xpix];
+                colR=pix & 255;
+                colG=(pix>>8)&255;
+                colB=(pix>>16)&255;
+                col= colR > 0xf0 ? 64 + 2: colR < 0x80 ? 0 : 2;
+                col|= colG > 0xf0 ? 64 + 4: colG < 0x80 ? 0 : 4;
+                col|= colB > 0xf0 ? 64 + 1: colB < 0x80 ? 0 : 1;
+                colBuf[ix]=col;
+                ix++;
+            }
+        }
+        //        Sort colors & counting;
+        int carry=1;
+        
+        for(int i=0;i<64;sortCol[i]=0,cntCol[i++]=0);
+        sortCol[0]=colBuf[0];
+        
+        for (int i=0;i<64;i++) {
+            BOOL flag=false;
+            for (int curCar=0;curCar<carry;curCar++) {
+                if(colBuf[i]==sortCol[curCar]) {
+                    cntCol[curCar]++;
+                    flag=true;
+                    break;
+                }
+            }
+            if(!flag) sortCol[carry]=colBuf[i], cntCol[carry++]++;
+        }
+        //          find 2 most meeted colors
+        int paperVal=0;
+        int paperCnt=0;
+        int inkVal=0;
+        int inkCnt=0;
+        
+        for (int i=0;i<carry;i++)
+            if(paperVal<cntCol[i]) paperCnt=i,paperVal=cntCol[i];
+        
+        if (paperVal!=64)
+        {
+            cntCol[paperCnt]=0;
+            for (int i=0;i<carry;i++) {
+                if(inkVal<cntCol[i]) inkCnt=i,inkVal=cntCol[i];
+            }
+        }
+        
+        //          set color in char
+        byteData[atr]=((64 & sortCol[paperCnt]) + ((sortCol[paperCnt]&7)<<3)) | sortCol[inkCnt];
+        //            set pixels
+        for(int yy=0;yy<8;yy++) {
+            int byte_l=0;
+            for (int xx=0;xx<8;xx++) {
+                if(colBuf[yy*8+xx]==sortCol[inkCnt]) byte_l=byte_l*2+1;
+                else byte_l*=2;
+            }
+            byteData[pixs+yy*256]=byte_l;
+        }
     }
     
+    //      Optimizing SCR
+    
+    for (int ychar=0;ychar<24;ychar++) {
+        
+        if(ychar>0) {
+            if([self compare:byteData[6144+(ychar-1)*32] with:byteData[6144+ychar*32]]) {
+                [self reverse:byteData withCharN:ychar*32];
+            }
+        }
+        for(int xchar=1;xchar<32;xchar++) {
+            if([self compare:byteData[6144+ychar*32+xchar-1] with:byteData[6144+ychar*32+xchar]]) {
+                [self reverse:byteData withCharN:ychar*32+xchar];
+            }
+        }
+    }
+    
+//    for(int ch=0;ch<768;ch++) byteData[6144+ch]=7;
     
     // create new image based on new data
     convertedSpeccyScr01 = [NSData dataWithBytes:(const void *)byteData length:len];
     
     
     // 5. Cleanup
-    CGColorSpaceRelease(colorSpace);
-    CGContextRelease(context);
+    //    free(colBuf);
+    //    free(sortCol);
+    //    free(cntCol);
+    //    free(byteData);
+    
+    //    CGColorSpaceRelease(colorSpace);
+    //    CGContextRelease(context);
     
 }
+
+
+-(void)reverse:(Byte*)byteData withCharN:(int)ch {
+    int pixs=((ch & 768) << 3) + (ch & 255);
+    int col=byteData[6144+ch];
+    byteData[6144+ch]=(col&64)+((col&7)<<3)+((col>>3)&7);
+    for(int y=0;y<8;y++) byteData[pixs+(y<<8)]^=255;
+}
+
+-(BOOL)compare:(int)chOld with:(int)chNew {
+    
+    int ink1=chOld&7;
+    int paper1=(chOld>>3) & 7;
+    int ink2=chNew&7;
+    int paper2=(chNew>>3) & 7;
+    
+    if(ink2==paper1 || paper2==ink1) return true;
+    
+    return false;
+}
+
 
 @end

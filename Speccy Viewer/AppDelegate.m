@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 #import <DropboxSDK/DropboxSDK.h>
+#import <DBChooser/DBChooser.h>
 
 @interface AppDelegate ()
 
@@ -16,9 +17,11 @@
 
 @implementation AppDelegate
 
-@synthesize window, IncomingURL;
+@synthesize window, IncomingURL, dropboxChooser;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
     DBSession *dbSession = [[DBSession alloc]
                             initWithAppKey:@"6ta68odfvpkhxe2"
@@ -33,22 +36,38 @@
 
 -(BOOL) application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    //    ViewController *_ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    //    ViewController *_ViewController;
+//    if (dropboxChooser == nil) {
+//        dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
+//    }
+    
+//    ViewController *_ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
+//    dropboxChooser = _ViewController.dropboxChooserInView;
+    
+    
     
     if (url != nil && [url isFileURL]) {
         IncomingURL = url;
         //        _ViewController.currentData = [NSData dataWithContentsOfURL:url];
         //        [_ViewController convert6912Screen];
     }
+
     
-    if ([[DBSession sharedSession] handleOpenURL:url]) {
+    if ([dropboxChooser handleOpenURL:url]) {
         if ([[DBSession sharedSession] isLinked]) {
             NSLog(@"App linked successfully!");
             // At this point you can start making API calls
         }
         return YES;
     }
+    
+
+    else if ([[DBChooser defaultChooser] handleOpenURL:url]) {
+        // This was a Chooser response and handleOpenURL automatically ran the
+        // completion block
+        return YES;
+    }
+
+
     // Add whatever other url handling code your app requires here
     return YES;
     
@@ -87,6 +106,7 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 
 @end

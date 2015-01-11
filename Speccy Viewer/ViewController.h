@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <DBChooser/DBChooser.h>
 
 @interface ViewController : UIViewController
 
@@ -14,6 +15,7 @@
 //- (void)convert6912Screen;
 
 @property NSData *currentData;
+@property (strong, nonatomic) DBChooser *dropboxChooserInView;
 
 @end
 

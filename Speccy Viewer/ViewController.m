@@ -11,6 +11,8 @@
 #import "AppDelegate.h"
 #import "CNPGridMenu.h"
 #import <DropboxSDK/DropboxSDK.h>
+#import <DBChooser/DBChooser.h>
+#import <DBChooser/DBChooserResult.h>
 
 @interface ViewController () <CNPGridMenuDelegate, DBRestClientDelegate>
 @property (nonatomic, strong) DBRestClient *restClient;
@@ -21,6 +23,11 @@
 @implementation ViewController
 
 {
+    NSString *nameOfIncomingFile;
+    BOOL isLoadedFileIsPNG;
+    
+    DBChooserResult *givenScreen;
+//    DBChooser *dropboxChooserInView;
     UIActivityViewController *shareScoresController;
     UIButton *mainMenu;
     NSUInteger incomingFileSize;
@@ -45,7 +52,7 @@
     CGFloat _firstY;
 }
 
-@synthesize currentData;
+@synthesize currentData, dropboxChooserInView;
 
 
 - (void)viewDidLoad {
@@ -55,15 +62,10 @@
     self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
     self.restClient.delegate = self;
     
-    self.view.backgroundColor = [UIColor blackColor];
+    // Dropbox Drop-Ins custom object
+    dropboxChooserInView = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
-//    RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
-//    UIImage *testImage = [UIImage imageNamed:@"midway.png"];
-//    [imageToConvert convertPNGtoSCR:testImage];
-//    
-//    currentData = imageToConvert.convertedSpeccyScr01;
-//    [self convert6912Screen:2];
-
+    self.view.backgroundColor = [UIColor blackColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(checkingForFileSize)
@@ -242,6 +244,9 @@
 
 -(void)checkingForFileSize {
     
+//    currentData =  [NSData dataWithContentsOfURL:givenScreen.link];
+//    [self convert6912Screen:2];
+    
     // cls
     
     for (UIView *view in self.view.subviews)
@@ -252,13 +257,10 @@
     [self addButtons];
     
     AppDelegate * appDelegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
-    currentData = [NSData dataWithContentsOfURL:appDelegate.IncomingURL];
     
-    //    NSData *data = currentData;
-    
-    //    NSUInteger len = [data length];
-    //    Byte *byteData = (Byte*)malloc(len);
-    //    memcpy(byteData, [data bytes], len);
+    if (appDelegate.IncomingURL != nil) {
+        currentData = [NSData dataWithContentsOfURL:appDelegate.IncomingURL];
+    }
     
     incomingFileSize = [currentData length];
     
@@ -329,6 +331,16 @@
     
     else if (incomingFileSize == 19456) {
         [self convertImgMg1];
+    }
+    
+    else if (incomingFileSize > 19456 || isLoadedFileIsPNG) {
+        
+        RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
+        UIImage *incomingImage = [UIImage imageWithData:currentData];
+        [imageToConvert convertPNGtoSCR:incomingImage];
+    
+        currentData = imageToConvert.convertedSpeccyScr01;
+        [self convert6912Screen:2];
     }
     
     else {
@@ -469,14 +481,14 @@
     
     CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
     i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
-    i01.title = @"Save *.png to Dropbox";
+    i01.title = @"Save *.png \nto Dropbox";
     
     CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
     i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
-    i02.title = @"Save *.scr to Dropbox";
+    i02.title = @"Save *.scr \nto Dropbox";
     
     CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
-    i03.icon = [UIImage imageNamed:@"btn_saveToCamerRoll@2x"];
+    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
     i03.title = @"Open file from Dropbox";
     
     CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
@@ -506,17 +518,14 @@
         
         if ([item.title isEqual: @"Open file from Dropbox"]) {
          
-//            NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-//            
-//            NSString *destDir = @"/SpeccyViewer/";
-//            [self.restClient loadFile:destDir intoPath:localDir];
+            [self didPressChoose];
             
         }
         
         else if ([item.title isEqual: @"Share Image"])
             [self shareImage];
         
-        else if ([item.title isEqual: @"Save *.png to Dropbox"]) {
+        else if ([item.title isEqual: @"Save *.png \nto Dropbox"]) {
             
             [self didPressLink];
         
@@ -543,14 +552,17 @@
         }
         }
         
-        else if ([item.title isEqual: @"Save *.scr to Dropbox"]) {
+        else if ([item.title isEqual: @"Save *.scr \nto Dropbox"]) {
             
             [self didPressLink];
             
             if (currentData != nil) {
                 
                 NSData *noflicImageData = currentData;
+                NSUInteger imageSize = [currentData length];
                 
+                if (imageSize == 6912) {
+                    
                 NSString *filename = @"Picture.scr";
                 NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
                 NSString *localPath = [localDir stringByAppendingPathComponent:filename];
@@ -558,8 +570,22 @@
                 
                 NSString *destDir = @"/SpeccyViewer/";
                 [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+                    
+                }
+                
+                else {
+                    
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No way!"
+                                                                    message:@"You can only save *.scr \n(6912 bytes) images"
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                }
+                
             }
         }
+        
         
     }];
 }
@@ -640,8 +666,8 @@
 - (void)restClient:(DBRestClient *)client uploadedFile:(NSString *)destPath
               from:(NSString *)srcPath metadata:(DBMetadata *)metadata {
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"File saved succesfully"
-                                                    message:@"Please check ../SpeccyViewer folder in your Dropbox"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"File saved succesfully!"
+                                                    message:@"Please check \nDropbox/SpeccyViewer folder."
                                                    delegate:nil
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
@@ -680,6 +706,60 @@ loadMetadataFailedWithError:(NSError *)error {
 
 - (void)restClient:(DBRestClient *)client loadFileFailedWithError:(NSError *)error {
     NSLog(@"There was an error loading the file: %@", error);
+}
+
+
+- (void)didPressChoose
+{
+//    AppDelegate * appDelegate = (AppDelegate *) [[UIApplication sharedApplication] delegate];
+//    dropboxChooserInView = appDelegate.dropboxChooser;
+
+    [[DBChooser defaultChooser] openChooserForLinkType:DBChooserLinkTypeDirect fromViewController:self
+                                            completion:^(NSArray *results)
+     {
+         if ([results count]) {
+             
+             // url
+             givenScreen = results[0];
+             
+             // filename
+//             nameOfIncomingFile = results[2];
+//             
+//             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"png"];
+//             NSRange range = [nameOfIncomingFile rangeOfCharacterFromSet:cset];
+//             if (range.location == NSNotFound) {
+//                 isLoadedFileIsPNG = NO;
+//             } else {
+//                 isLoadedFileIsPNG = YES;
+//             }
+//
+//             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@"PNG"];
+//             NSRange range2 = [nameOfIncomingFile rangeOfCharacterFromSet:cset2];
+//             if (range2.location == NSNotFound) {
+//                 isLoadedFileIsPNG = NO;
+//             } else {
+//                 isLoadedFileIsPNG = YES;
+//             }
+             
+//             NSString *incomingString = [givenScreen.link absoluteString];
+//             NSLog(@"Link: %@", incomingString);
+//             
+//             NSString *fixedURL = [incomingString stringByReplacingOccurrencesOfString:@"?dl=0" withString:@"?raw=1"];
+//             NSLog(@"FXLink: %@", fixedURL);
+             
+             currentData = [NSData dataWithContentsOfURL:givenScreen.link];
+             [self checkingForFileSize];
+//
+//             NSLog(@"Link: %@", givenScreen.link);
+             
+         } else {
+             givenScreen = nil;
+//             [[[UIAlertView alloc] initWithTitle:@"CANCELLED" message:@"user cancelled!"
+//                                        delegate:nil cancelButtonTitle:@"Okay" otherButtonTitles:nil]
+//              show];
+         }
+
+     }];
 }
 
 
