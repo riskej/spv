@@ -24,10 +24,12 @@
     dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
     DBSession *dbSession = [[DBSession alloc]
-                            initWithAppKey:@"6ta68odfvpkhxe2"
-                            appSecret:@"9tcjf8c6r7yx14g"
+                            initWithAppKey:@"ouyj0nf0fdi55z5"
+                            appSecret:@"ebi7x61xyuzfp4s"
                             root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
     [DBSession setSharedSession:dbSession];
+    
+//    [DBRequest setNetworkRequestDelegate:self];
     
     return YES;
     
@@ -50,23 +52,34 @@
         //        _ViewController.currentData = [NSData dataWithContentsOfURL:url];
         //        [_ViewController convert6912Screen];
     }
-
     
-    if ([dropboxChooser handleOpenURL:url]) {
+    if ([[DBChooser defaultChooser] handleOpenURL:url]) {
+        // This was a Chooser response and handleOpenURL automatically ran the
+        // completion block
+        return YES;
+    }
+    
+//    if ([dropboxChooser handleOpenURL:url]) {
+//        // This was a Chooser response and handleOpenURL automatically ran the
+//        // completion block
+//        return YES;
+//    }
+//    
+//    if ([dropboxChooser handleOpenURL:url]) {
+//        if ([[DBSession sharedSession] isLinked]) {
+//            NSLog(@"App linked successfully!");
+//            // At this point you can start making API calls
+//        }
+//        return YES;
+//    }
+    
+    if ([[DBSession sharedSession] handleOpenURL:url]) {
         if ([[DBSession sharedSession] isLinked]) {
             NSLog(@"App linked successfully!");
             // At this point you can start making API calls
         }
         return YES;
     }
-    
-
-    else if ([[DBChooser defaultChooser] handleOpenURL:url]) {
-        // This was a Chooser response and handleOpenURL automatically ran the
-        // completion block
-        return YES;
-    }
-
 
     // Add whatever other url handling code your app requires here
     return YES;
@@ -91,6 +104,14 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     
     //    NSLog(@"App did become active!");
+    
+    dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
+    
+    DBSession *dbSession = [[DBSession alloc]
+                            initWithAppKey:@"acyvmizmp7cafzp"
+                            appSecret:@"ztrf4ksf7agvvq4"
+                            root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
+    [DBSession setSharedSession:dbSession];
     
     NSLog(@"Incoming URL: %@", IncomingURL);
     

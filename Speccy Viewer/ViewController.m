@@ -748,7 +748,8 @@ loadMetadataFailedWithError:(NSError *)error {
 //             NSLog(@"FXLink: %@", fixedURL);
              
              currentData = [NSData dataWithContentsOfURL:givenScreen.link];
-             [self checkingForFileSize];
+             [self checkingForFileSize];             
+             
 //
 //             NSLog(@"Link: %@", givenScreen.link);
              

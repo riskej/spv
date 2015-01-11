@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F28393F1A62E9620055BD56 /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 0F28393C1A62E9620055BD56 /* DBChooser.bundle */; };
+		0F2839401A62E9620055BD56 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F28393D1A62E9620055BD56 /* DBChooser.framework */; };
+		0F2839411A62E9620055BD56 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F28393E1A62E9620055BD56 /* DropboxSDK.framework */; };
 		0F32AF101A611A400049E46F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F32AF0F1A611A400049E46F /* Foundation.framework */; };
 		0F32AF121A611A4D0049E46F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F32AF111A611A4D0049E46F /* CoreGraphics.framework */; };
 		0F32AF141A611A5A0049E46F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F32AF131A611A5A0049E46F /* UIKit.framework */; };
@@ -18,8 +21,6 @@
 		0F5B9A591A615D2E00C3BDC2 /* btn_share@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */; };
 		0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A5A1A6172E400C3BDC2 /* Security.framework */; };
 		0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A5F1A619A0400C3BDC2 /* midway.png */; };
-		0F5B9A621A61B52A00C3BDC2 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */; };
-		0F5B9A641A61D7DA00C3BDC2 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F5B9A631A61D7DA00C3BDC2 /* DBChooser.framework */; };
 		0F5B9A661A62C17900C3BDC2 /* btn_openfile@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0F5B9A651A62C17900C3BDC2 /* btn_openfile@2x.png */; };
 		0FA6152C1A5E664500DE7675 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152B1A5E664500DE7675 /* main.m */; };
 		0FA6152F1A5E664500DE7675 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA6152E1A5E664500DE7675 /* AppDelegate.m */; };
@@ -43,6 +44,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0F28393C1A62E9620055BD56 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = DBChooser.bundle; path = "Speccy Viewer/DBChooser.bundle"; sourceTree = "<group>"; };
+		0F28393D1A62E9620055BD56 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
+		0F28393E1A62E9620055BD56 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
 		0F32AF0F1A611A400049E46F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		0F32AF111A611A4D0049E46F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		0F32AF131A611A5A0049E46F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -55,8 +59,6 @@
 		0F5B9A571A615D2E00C3BDC2 /* btn_share@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_share@2x.png"; path = "Files/btn_share@2x.png"; sourceTree = "<group>"; };
 		0F5B9A5A1A6172E400C3BDC2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		0F5B9A5F1A619A0400C3BDC2 /* midway.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = midway.png; path = Files/midway.png; sourceTree = "<group>"; };
-		0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
-		0F5B9A631A61D7DA00C3BDC2 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
 		0F5B9A651A62C17900C3BDC2 /* btn_openfile@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_openfile@2x.png"; path = "Files/btn_openfile@2x.png"; sourceTree = "<group>"; };
 		0FA615261A5E664500DE7675 /* Speccy Viewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Speccy Viewer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FA6152A1A5E664500DE7675 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,10 +84,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */,
+				0F2839411A62E9620055BD56 /* DropboxSDK.framework in Frameworks */,
+				0F2839401A62E9620055BD56 /* DBChooser.framework in Frameworks */,
 				0F32AF141A611A5A0049E46F /* UIKit.framework in Frameworks */,
-				0F5B9A641A61D7DA00C3BDC2 /* DBChooser.framework in Frameworks */,
 				0F32AF121A611A4D0049E46F /* CoreGraphics.framework in Frameworks */,
-				0F5B9A621A61B52A00C3BDC2 /* DropboxSDK.framework in Frameworks */,
 				0F32AF101A611A400049E46F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,8 +115,9 @@
 		0F32AF151A611A640049E46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0F5B9A631A61D7DA00C3BDC2 /* DBChooser.framework */,
-				0F5B9A611A61B52A00C3BDC2 /* DropboxSDK.framework */,
+				0F28393C1A62E9620055BD56 /* DBChooser.bundle */,
+				0F28393D1A62E9620055BD56 /* DBChooser.framework */,
+				0F28393E1A62E9620055BD56 /* DropboxSDK.framework */,
 				0F5B9A5A1A6172E400C3BDC2 /* Security.framework */,
 				0F32AF131A611A5A0049E46F /* UIKit.framework */,
 				0F32AF111A611A4D0049E46F /* CoreGraphics.framework */,
@@ -297,6 +300,7 @@
 				0F5B9A581A615D2E00C3BDC2 /* btn_saveSCR@2x.png in Resources */,
 				0F5B9A661A62C17900C3BDC2 /* btn_openfile@2x.png in Resources */,
 				0F5B9A531A615B0500C3BDC2 /* btn_saveToCamerRoll@2x.png in Resources */,
+				0F28393F1A62E9620055BD56 /* DBChooser.bundle in Resources */,
 				0F5B9A551A615C5600C3BDC2 /* btn_savePNG@2x.png in Resources */,
 				0FA6153A1A5E664500DE7675 /* LaunchScreen.xib in Resources */,
 				0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */,
@@ -453,6 +457,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 				);
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
@@ -468,6 +476,10 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
 				);
