@@ -18,10 +18,11 @@
 @property int BorderColor1;
 @property int BorderColor2;
 
-- (void) openZX_scr6144:(NSData*)datafile;
+- (void) openZX_scr6144_n_rgb:(NSData*)datafile;
 - (void) openZX_scr6912:(NSData*)datafile;
 - (void) openZX_img_mgX:(NSData*)datafile;
 - (void) openZX_img_mg1:(NSData*)datafile;
+- (void) openZX_chr$:   (NSData*)datafile;
 -(void) convertPNGtoSCR:(UIImage *)inputImage;
 
 @end

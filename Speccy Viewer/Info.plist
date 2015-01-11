@@ -93,6 +93,8 @@
 					<string>mg4</string>
 					<string>mg2</string>
 					<string>mg1</string>
+					<string>ch$</string>
+					<string>rgb</string>
 				</array>
 				<key>public.mime-type</key>
 				<string>image/speccy</string>

@@ -76,13 +76,13 @@
 }
 
 
-- (void) convert6144Screen:(int) mode_scr {
+- (void) convert6144_n_rgb:(int) mode_scr {
     
     //    NSLog(@"URL in view: %@", currentData);
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
-    [convertedImage openZX_scr6144:currentData];
+    [convertedImage openZX_scr6144_n_rgb:currentData];
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage;
     
@@ -118,6 +118,35 @@
     
     ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     ScreenToShow2.image = convertedImage.FinallyProcessedImage;
+    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    
+    [self.view addSubview:ScreenToShow];
+    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
+    [self.view addSubview:ScreenToShow2];
+    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    
+}
+
+- (void) convertChr$:(int)mode_scr height:(int)height width:(int)width {
+    
+    //    NSLog(@"URL in view: %@", currentData);
+    
+    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+    convertedImage.mode_scr=mode_scr;
+    [convertedImage openZX_chr$:currentData];
+    
+    image01 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage2;
+    
+    int xx=height*8;
+    int yy=width*8;
+    
+    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
+    ScreenToShow.image = convertedImage.FinallyProcessedImage;
+    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    
+    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
+    ScreenToShow2.image = convertedImage.FinallyProcessedImage2;
     ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:ScreenToShow];
@@ -244,8 +273,8 @@
 
 -(void)checkingForFileSize {
     
-//    currentData =  [NSData dataWithContentsOfURL:givenScreen.link];
-//    [self convert6912Screen:2];
+    //    currentData =  [NSData dataWithContentsOfURL:givenScreen.link];
+    //    [self convert6912Screen:2];
     
     // cls
     
@@ -264,6 +293,13 @@
     
     incomingFileSize = [currentData length];
     
+    NSUInteger len = 7;
+    Byte *ident = (Byte*)malloc(len);
+    
+    if (incomingFileSize > 15) {
+        NSData *data = currentData;
+        memcpy(ident, [data bytes], len);
+    }
     //    NSLog(@"Incfileszie: %i", (int)incomingFileSize);
     
     if (incomingFileSize == 0) {
@@ -296,11 +332,14 @@
         //          6 - mg2
         //          7 – mg1
         //          8 - mc
+        //          9 - chr$
     }
-    
+    else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
+        [self convertChr$:9 height:ident[4] width:ident[5]];
+    }
     else if (incomingFileSize == 6144) {
         self.view.backgroundColor = [UIColor blackColor];
-        [self convert6144Screen:1];
+        [self convert6144_n_rgb:1];
     }
     
     else if (incomingFileSize == 6912) {
@@ -331,6 +370,10 @@
     
     else if (incomingFileSize == 19456) {
         [self convertImgMg1];
+    }
+    
+    else if (incomingFileSize == 18432) {
+        [self convert6144_n_rgb:10];
     }
     
     else if (incomingFileSize > 19456 || isLoadedFileIsPNG) {

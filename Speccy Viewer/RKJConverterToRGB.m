@@ -35,7 +35,7 @@
 //#define RGBMake(r, g, b) ( Mask8(r) | Mask8(g) << 8 | Mask8(b) << 16 )
 //#define BlackColor = 0;
 
-- (void) openZX_scr6144:(NSData*)datafile {
+- (void) openZX_scr6144_n_rgb:(NSData*)datafile {
     
     UInt32 * inputPixels;
     
@@ -60,29 +60,35 @@
     
     
     for (NSUInteger yRetina = 0; yRetina < 2; yRetina++) {
-        
         for (int line = 0; line < 192; line++) {
-            
             [self calculateAddressForPixel:line andMode:mode_scr];
-            
             for (int xchar = 0; xchar < 32; xchar++) {
-                
                 UInt32 * inputPixel = inputPixels + (line * 2 + yRetina) * 512 + (xchar*16);
-                
-                NSUInteger byte = byteData[shiftPixelAdress + xchar];
-                
-                for (int xBit=128;xBit>0; xBit/=2) {
-                    *inputPixel++ = byte & xBit ? 0xffffff : 0;
-                    *inputPixel++ = byte & xBit ? 0xffffff : 0;
+                if(mode_scr==1){
+                    NSUInteger byte = byteData[shiftPixelAdress + xchar];
+                    for (int xBit=128;xBit>0; xBit/=2) {
+                        *inputPixel++ = byte & xBit ? 0xffffff : 0;
+                        *inputPixel++ = byte & xBit ? 0xffffff : 0;
+                    }
+                }
+                if(mode_scr==10) {
+                    NSUInteger byteR = byteData[shiftPixelAdress + xchar];
+                    NSUInteger byteG = byteData[shiftPixelAdress + xchar+6144];
+                    NSUInteger byteB = byteData[shiftPixelAdress + xchar+12288];
+                    
+                    for (int xBit=128;xBit>0; xBit/=2) {
+                        int pix = byteR & xBit ? 0xff : 0;
+                        pix|= byteG & xBit ? 0xff00 : 0;
+                        pix|= byteB & xBit ? 0xff0000 : 0;
+                        *inputPixel++=pix;
+                        *inputPixel++=pix;
+                    }
                 }
                 
-                
+               
             }
-            
         }
     }
-    //
-    
     
     CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
@@ -181,6 +187,147 @@
     CGColorSpaceRelease(colorSpace);
     CGImageRelease(newCGImage);
     CGContextRelease(context);
+    
+}
+
+
+- (void) openZX_chr$:(NSData*)datafile {
+    
+    //    NSUInteger testArray[15] = [1, 2, 3];
+    
+    UInt32 * inputPixels;
+    UInt32 * inputPixels2;
+    NSData *data = datafile;
+    NSUInteger len = [data length];
+    Byte *byteData = (Byte*)malloc(len);
+    memcpy(byteData, [data bytes], len);
+    
+    NSUInteger colorPalettePulsar [16] = {0x0, 0xca0000, 0x0000ca, 0xca00ca, 0x00ca00, 0xcaca00, 0x00caca, 0xcacaca,
+        0x0, 0xfe0000, 0x0000fe, 0xfe00fe, 0x00fe00, 0xfefe00, 0x00fefe, 0xfefefe};
+    
+    
+    int xMax=byteData[4];
+    int yMax=byteData[5];
+    int mode=byteData[6];
+    
+    int kRetina=2;
+    NSUInteger inputWidth = xMax * 8 * kRetina;
+    NSUInteger inputHeight =yMax * 8 * kRetina;
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    
+    NSUInteger bytesPerPixel = 4;
+    NSUInteger bitsPerComponent = 8;
+    
+    
+    NSUInteger inputBytesPerRow = bytesPerPixel * inputWidth;
+    
+    
+    inputPixels =  (UInt32 *)calloc(inputHeight * inputWidth, sizeof(UInt32));
+    inputPixels2 = (UInt32 *)calloc(inputHeight * inputWidth, sizeof(UInt32));
+    NSLog(@"screen length: %lu", (unsigned long)data.length);
+    NSLog(@"Width: %i", xMax);
+    NSLog(@"Height: %i", yMax);
+    
+    
+    for (int ychar=0; ychar<yMax; ychar++) {
+        
+        for (int xchar=0; xchar<xMax; xchar++) {
+            
+            //            UInt32 * inputPixel = inputPixels + ychar*8*inputBytesPerRow + (xchar*8*kRetina);
+            
+            
+            NSUInteger nchar = ychar * xMax + xchar;
+            
+            if (mode==8) {
+                for(int ypix=0;ypix<8;ypix++) {
+                    NSUInteger adr = ((ychar * 8 + ypix) * kRetina) * inputWidth  + (xchar*8*kRetina);
+                    NSUInteger byte = byteData[7+nchar*8+ypix];
+                    int xpix=0;
+                    for(int xBit=128;xBit>0;xBit/=2) {
+                        UInt32 val= byte & xBit ? 0xffffff : 0;
+                        for(int yRetina=0;yRetina<kRetina;yRetina++) {
+                            UInt32 * inputPixel=inputPixels + adr + yRetina * inputWidth + xpix * kRetina;
+                            UInt32 * inputPixel2=inputPixels2 + adr + yRetina * inputWidth + xpix * kRetina;
+                            xpix++;
+                            for(int xRetina=0;xRetina<kRetina;xRetina++) {
+                                *inputPixel++=val;
+                                *inputPixel2++=val;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if (mode==9) {
+                for(int ypix=0;ypix<8;ypix++) {
+                    NSUInteger adr = ((ychar * 8 + ypix) * kRetina) * inputWidth  + (xchar*8*kRetina);
+                    NSUInteger atr = byteData[7+nchar*9+8];
+                    NSUInteger bright = atr & 64 ? 8 : 0;
+                    NSUInteger ink=(UInt32)colorPalettePulsar [(atr & 7) + bright];
+                    NSUInteger paper=(UInt32)colorPalettePulsar [(atr >> 3) & 7 + bright];
+                    NSUInteger byte = byteData[7+nchar*9+ypix];
+                    int xpix=0;
+                    for(int xBit=128;xBit>0;xBit/=2,xpix++) {
+                        UInt32 val= byte & xBit ? (int)ink : (int)paper;
+                        for(int yRetina=0;yRetina<kRetina;yRetina++) {
+                            UInt32 * inputPixel=inputPixels + adr + yRetina * inputWidth + xpix * kRetina;
+                            UInt32 * inputPixel2=inputPixels2 + adr + yRetina * inputWidth + xpix * kRetina;
+                            
+                            for(int xRetina=0;xRetina<kRetina;xRetina++) {
+                                *inputPixel++=val;
+                                *inputPixel2++=val;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            
+        }
+        
+    }
+    
+    
+    
+    
+    
+    CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
+                                                 bitsPerComponent, inputBytesPerRow, colorSpace,
+                                                 kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
+    
+    CGImageRef newCGImage = CGBitmapContextCreateImage(context);
+    CGContextDrawImage(context, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage);
+    
+    UIImage * processedImage = [UIImage imageWithCGImage:newCGImage];
+    FinallyProcessedImage = processedImage;
+    
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    
+    
+    
+    
+    //
+    
+    CGContextRef context2 = CGBitmapContextCreate(inputPixels2, inputWidth, inputHeight,
+                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
+                                                  kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
+    
+    CGImageRef newCGImage2 = CGBitmapContextCreateImage(context2);
+    CGContextDrawImage(context2, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage2);
+    
+    UIImage * processedImage2 = [UIImage imageWithCGImage:newCGImage2];
+    FinallyProcessedImage2 = processedImage2;
+    
+    free(inputPixels);
+    free(inputPixels2);
+    free(byteData);
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context2);
+    CGImageRelease(newCGImage);
+    CGImageRelease(newCGImage2);
     
 }
 
@@ -517,6 +664,8 @@
     //          6 - mg2
     //          7 – mg1
     //          8 - mc
+    //          9 - chr$
+    //          10- rgb(3color)
     switch (mode) {
         case 2:
         case 3:
