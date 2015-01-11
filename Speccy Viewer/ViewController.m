@@ -59,8 +59,8 @@
     [super viewDidLoad];
     
     // Dropbox init
-    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
-    self.restClient.delegate = self;
+//    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+//    self.restClient.delegate = self;
     
     // Dropbox Drop-Ins custom object
     dropboxChooserInView = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
@@ -747,8 +747,22 @@ loadMetadataFailedWithError:(NSError *)error {
 //             NSString *fixedURL = [incomingString stringByReplacingOccurrencesOfString:@"?dl=0" withString:@"?raw=1"];
 //             NSLog(@"FXLink: %@", fixedURL);
              
-             currentData = [NSData dataWithContentsOfURL:givenScreen.link];
-             [self checkingForFileSize];             
+             if([[DBSession sharedSession] isLinked])
+             {
+                 self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+                 self.restClient.delegate = self;
+                 
+                 currentData = [NSData dataWithContentsOfURL:givenScreen.link];
+                 [self checkingForFileSize];
+             }
+             else
+             {
+                 //If not linked then start linking here..
+                 [[DBSession sharedSession] linkFromController:self];
+             }
+
+             
+            
              
 //
 //             NSLog(@"Link: %@", givenScreen.link);

@@ -24,8 +24,8 @@
     dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
     DBSession *dbSession = [[DBSession alloc]
-                            initWithAppKey:@"ouyj0nf0fdi55z5"
-                            appSecret:@"ebi7x61xyuzfp4s"
+                            initWithAppKey:@"acyvmizmp7cafzp"
+                            appSecret:@"ztrf4ksf7agvvq4"
                             root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
     [DBSession setSharedSession:dbSession];
     
@@ -38,6 +38,21 @@
 
 -(BOOL) application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
+    if ([[DBSession sharedSession] handleOpenURL:url]) {
+        if ([[DBSession sharedSession] isLinked]) {
+            NSLog(@"App linked successfully!");
+            // At this point you can start making API calls
+        }
+        
+        if ([[DBChooser defaultChooser] handleOpenURL:url]) {
+            // This was a Chooser response and handleOpenURL automatically ran the
+            // completion block
+            return YES;
+        }
+        
+        return YES;
+    }
+    
 //    if (dropboxChooser == nil) {
 //        dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
 //    }
@@ -45,41 +60,19 @@
 //    ViewController *_ViewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
 //    dropboxChooser = _ViewController.dropboxChooserInView;
     
-    
-    
     if (url != nil && [url isFileURL]) {
         IncomingURL = url;
         //        _ViewController.currentData = [NSData dataWithContentsOfURL:url];
         //        [_ViewController convert6912Screen];
     }
     
-    if ([[DBChooser defaultChooser] handleOpenURL:url]) {
-        // This was a Chooser response and handleOpenURL automatically ran the
-        // completion block
-        return YES;
-    }
-    
-//    if ([dropboxChooser handleOpenURL:url]) {
+//    if ([[DBChooser defaultChooser] handleOpenURL:url]) {
 //        // This was a Chooser response and handleOpenURL automatically ran the
 //        // completion block
 //        return YES;
 //    }
-//    
-//    if ([dropboxChooser handleOpenURL:url]) {
-//        if ([[DBSession sharedSession] isLinked]) {
-//            NSLog(@"App linked successfully!");
-//            // At this point you can start making API calls
-//        }
-//        return YES;
-//    }
-    
-    if ([[DBSession sharedSession] handleOpenURL:url]) {
-        if ([[DBSession sharedSession] isLinked]) {
-            NSLog(@"App linked successfully!");
-            // At this point you can start making API calls
-        }
-        return YES;
-    }
+
+
 
     // Add whatever other url handling code your app requires here
     return YES;
@@ -105,13 +98,13 @@
     
     //    NSLog(@"App did become active!");
     
-    dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
-    
-    DBSession *dbSession = [[DBSession alloc]
-                            initWithAppKey:@"acyvmizmp7cafzp"
-                            appSecret:@"ztrf4ksf7agvvq4"
-                            root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
-    [DBSession setSharedSession:dbSession];
+//    dropboxChooser = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
+//    
+//    DBSession *dbSession = [[DBSession alloc]
+//                            initWithAppKey:@"acyvmizmp7cafzp"
+//                            appSecret:@"ztrf4ksf7agvvq4"
+//                            root:kDBRootAppFolder]; // either kDBRootAppFolder or kDBRootDropbox
+//    [DBSession setSharedSession:dbSession];
     
     NSLog(@"Incoming URL: %@", IncomingURL);
     
