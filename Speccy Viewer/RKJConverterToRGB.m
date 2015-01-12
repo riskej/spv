@@ -24,6 +24,7 @@
 
 @synthesize convertedSpeccyScr01;
 @synthesize mode_scr;
+@synthesize kRetina;
 @synthesize FinallyProcessedImage;
 @synthesize FinallyProcessedImage2;
 @synthesize FinallyProcessedImage_giga;
@@ -111,13 +112,15 @@
 
 - (void) openZX_scr6912:(NSData*)datafile {
     
-    UInt32 * inputPixels;
-    
+    UInt32 * inputPixels_firstImage_noFlash;
+    UInt32 * inputPixels_firstImage_invertedFlash;
     NSUInteger colorPalettePulsar [16] = {0x0, 0xca0000, 0x0000ca, 0xca00ca, 0x00ca00, 0xcaca00, 0x00caca, 0xcacaca,
         0x0, 0xfe0000, 0x0000fe, 0xfe00fe, 0x00fe00, 0xfefe00, 0x00fefe, 0xfefefe};
     
-    NSUInteger inputWidth = 256*2;
-    NSUInteger inputHeight = 192*2;
+    
+    
+    NSUInteger inputWidth = 256*kRetina;
+    NSUInteger inputHeight = 192*kRetina;
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     
@@ -126,8 +129,8 @@
     
     NSUInteger inputBytesPerRow = bytesPerPixel * inputWidth;
     
-    inputPixels = (UInt32 *)calloc(inputHeight * inputWidth, sizeof(UInt32));
-    
+    inputPixels_firstImage_noFlash = (UInt32 *)calloc(inputHeight * inputWidth, sizeof(UInt32));
+    inputPixels_firstImage_invertedFlash = (UInt32 *)calloc(inputHeight * inputWidth, sizeof(UInt32));
     //    NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString :@"https://dl.dropboxusercontent.com/u/36464659/_apptest/nday6144.scr"]];
     
     //    NSData *data = [NSData dataWithContentsOfFile:@"/Users/riskej/Documents/Developing/SpecViewT1/Files/nday6144.scr"];
@@ -144,7 +147,7 @@
     NSUInteger firstByteOfPixelArrayOfFirstScreen = 0;
     NSUInteger firstByteOfCharsArrayOfFirstScreen = 6144;
     
-    for (NSUInteger yRetina = 0; yRetina < 2; yRetina++) {
+    for (NSUInteger yRetina = 0; yRetina < kRetina; yRetina++) {
         
         for (int line=0; line<192; line++) {
             
@@ -152,41 +155,59 @@
             
             for (int xchar=0; xchar<32; xchar++) {
                 
-                UInt32 * inputPixel = inputPixels + (line * 2 + yRetina) * 512 + (xchar*16);
-                
+                UInt32 * inputPixel_firstImage_noFlash = inputPixels_firstImage_noFlash + (line * kRetina + yRetina) * inputWidth + (xchar*8*kRetina);
+                UInt32 * inputPixel_firstImage_invertedFlash = inputPixels_firstImage_invertedFlash + (line * kRetina + yRetina) * inputWidth + (xchar*8*kRetina);
                 NSUInteger byte = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
                 NSUInteger atr= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
+                bool flash = atr & 128;
                 NSUInteger bright = atr & 64 ? 8 : 0;
                 NSUInteger ink=(UInt32)colorPalettePulsar [(atr & 7) + bright];
                 NSUInteger paper=(UInt32)colorPalettePulsar [(atr >> 3) & 7 + bright];
                 
-                
                 for (int xBit=128;xBit>0; xBit/=2) {
-                    *inputPixel++ = byte & xBit ? (int)ink : (int)paper;
-                    *inputPixel++ = byte & xBit ? (int)ink : (int)paper;
+                    UInt32 valNoFlash= byte & xBit ? (int)ink : (int)paper;
+                    UInt32 valFlash= (bool) (byte & xBit) ^ flash ? (int)ink : (int)paper;
+                    for(int xRetina=0;xRetina<kRetina;xRetina++) {
+                        *inputPixel_firstImage_noFlash++ = valNoFlash;
+                        *inputPixel_firstImage_invertedFlash++ = valFlash;
+                    }
                 }
-                
-                
             }
-            
         }
     }
-    CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
+    CGContextRef context = CGBitmapContextCreate(inputPixels_firstImage_noFlash, inputWidth, inputHeight,
                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
                                                  kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
     
     CGImageRef newCGImage = CGBitmapContextCreateImage(context);
     CGContextDrawImage(context, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage);
     
-    free(inputPixels);
+    
     
     UIImage * processedImage = [UIImage imageWithCGImage:newCGImage];
     FinallyProcessedImage = processedImage;
     
     free(byteData);
-    CGColorSpaceRelease(colorSpace);
+    //    CGColorSpaceRelease(colorSpace);
     CGImageRelease(newCGImage);
     CGContextRelease(context);
+    
+    CGContextRef context2 = CGBitmapContextCreate(inputPixels_firstImage_invertedFlash, inputWidth, inputHeight,
+                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
+                                                  kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
+    
+    CGImageRef newCGImage2 = CGBitmapContextCreateImage(context2);
+    CGContextDrawImage(context2, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage2);
+    
+    free(inputPixels_firstImage_noFlash);
+    free(inputPixels_firstImage_invertedFlash);
+    
+    UIImage * processedImage2 = [UIImage imageWithCGImage:newCGImage2];
+    FinallyProcessedImage2 = processedImage2;
+    
+    CGColorSpaceRelease(colorSpace);
+    CGImageRelease(newCGImage2);
+    CGContextRelease(context2);
     
 }
 
@@ -210,7 +231,6 @@
     int yMax=byteData[5];
     int mode=byteData[6];
     
-    int kRetina=2;
     NSUInteger inputWidth = xMax * 8 * kRetina;
     NSUInteger inputHeight =yMax * 8 * kRetina;
     

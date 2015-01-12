@@ -12,6 +12,8 @@
 
 @property NSData* convertedSpeccyScr01;
 @property int mode_scr;
+@property int kRetina;
+@property BOOL flicker;
 @property (strong, nonatomic) UIImage *FinallyProcessedImage;
 @property (strong, nonatomic) UIImage *FinallyProcessedImage2;
 @property (strong, nonatomic) UIImage *FinallyProcessedImage_giga;

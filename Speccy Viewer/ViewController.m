@@ -23,11 +23,9 @@
 @implementation ViewController
 
 {
-    NSString *nameOfIncomingFile;
-    BOOL isLoadedFileIsPNG;
-    
+    int kRetina;
+    BOOL isLoadedFilePNG;
     DBChooserResult *givenScreen;
-//    DBChooser *dropboxChooserInView;
     UIActivityViewController *shareScoresController;
     UIButton *mainMenu;
     NSUInteger incomingFileSize;
@@ -38,10 +36,10 @@
     CADisplayLink *theTimer;
     UIPinchGestureRecognizer *pinchRecognizer;
     UIImageView *flickerImages;
-    UIImageView *ScreenToShow;
-    UIImageView *ScreenToShow2;
-    UIImageView *BorderToShow;
-    UIImageView *BorderToShow2;
+    UIImageView *screenToShow;
+    UIImageView *screenToShow2;
+    UIImageView *borderToShow;
+    UIImageView *borderToShow2;
     UIColor *borderColorScreen01;
     UIColor *borderColorScreen02;
     int border01, border02;
@@ -65,6 +63,8 @@
     // Dropbox Drop-Ins custom object
     dropboxChooserInView = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
+    kRetina=2;
+
     self.view.backgroundColor = [UIColor blackColor];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -82,22 +82,23 @@
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
+    convertedImage.kRetina = kRetina;
     [convertedImage openZX_scr6144_n_rgb:currentData];
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage;
     
-    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow.image = convertedImage.FinallyProcessedImage;
+    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
 
-    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow2.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow2.image = convertedImage.FinallyProcessedImage;
+    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    [self.view addSubview:ScreenToShow];
-    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
-    [self.view addSubview:ScreenToShow2];
-    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    [self.view addSubview:screenToShow];
+    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+    [self.view addSubview:screenToShow2];
+    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
 }
 
 
@@ -107,23 +108,24 @@
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
+    convertedImage.kRetina = kRetina;
     [convertedImage openZX_scr6912:currentData];
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage;
     
-    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow.image = convertedImage.FinallyProcessedImage;
+    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow2.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow2.image = convertedImage.FinallyProcessedImage;
+    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    [self.view addSubview:ScreenToShow];
-    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
-    [self.view addSubview:ScreenToShow2];
-    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    [self.view addSubview:screenToShow];
+    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+    [self.view addSubview:screenToShow2];
+    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
     
 }
 
@@ -133,6 +135,7 @@
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
+    convertedImage.kRetina = kRetina;
     [convertedImage openZX_chr$:currentData];
     
     image01 = convertedImage.FinallyProcessedImage;
@@ -141,18 +144,18 @@
     int xx=height*8;
     int yy=width*8;
     
-    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
-    ScreenToShow.image = convertedImage.FinallyProcessedImage;
-    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
+    screenToShow.image = convertedImage.FinallyProcessedImage;
+    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
-    ScreenToShow2.image = convertedImage.FinallyProcessedImage2;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
+    screenToShow2.image = convertedImage.FinallyProcessedImage2;
+    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    [self.view addSubview:ScreenToShow];
-    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
-    [self.view addSubview:ScreenToShow2];
-    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    [self.view addSubview:screenToShow];
+    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+    [self.view addSubview:screenToShow2];
+    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
     
 }
 
@@ -161,6 +164,7 @@
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
+    convertedImage.kRetina = kRetina;
     [convertedImage openZX_img_mgX:currentData];
     
     border01 = convertedImage.BorderColor1;
@@ -169,17 +173,17 @@
     [self getBorderColors];
     
     if (incomingFileSize != 13824) {
-        BorderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        BorderToShow.backgroundColor = borderColorScreen01;
-        BorderToShow.alpha = 1;
-        BorderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        BorderToShow2.backgroundColor = borderColorScreen02;
-        BorderToShow2.alpha = 0.5;
+        borderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        borderToShow.backgroundColor = borderColorScreen01;
+        borderToShow.alpha = 1;
+        borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        borderToShow2.backgroundColor = borderColorScreen02;
+        borderToShow2.alpha = 0.5;
     
-        [self.view addSubview:BorderToShow];
-        [self.view insertSubview:BorderToShow belowSubview:mainMenu];
-        [self.view addSubview:BorderToShow2];
-        [self.view insertSubview:BorderToShow2 belowSubview:mainMenu];
+        [self.view addSubview:borderToShow];
+        [self.view insertSubview:borderToShow belowSubview:mainMenu];
+        [self.view addSubview:borderToShow2];
+        [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
     }
     
     image01 = convertedImage.FinallyProcessedImage;
@@ -194,6 +198,7 @@
 - (void) convertImgMg1 {
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+    convertedImage.kRetina = kRetina;
     [convertedImage openZX_img_mg1:currentData];
     
     border01 = convertedImage.BorderColor1;
@@ -201,17 +206,17 @@
     
     [self getBorderColors];
     
-    BorderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    BorderToShow.backgroundColor = borderColorScreen01;
-    BorderToShow.alpha = 1;
-    BorderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    BorderToShow2.backgroundColor = borderColorScreen02;
-    BorderToShow2.alpha = 0.5;
+    borderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    borderToShow.backgroundColor = borderColorScreen01;
+    borderToShow.alpha = 1;
+    borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    borderToShow2.backgroundColor = borderColorScreen02;
+    borderToShow2.alpha = 0.5;
     
-    [self.view addSubview:BorderToShow];
-    [self.view insertSubview:BorderToShow belowSubview:mainMenu];
-    [self.view addSubview:BorderToShow2];
-    [self.view insertSubview:BorderToShow2 belowSubview:mainMenu];
+    [self.view addSubview:borderToShow];
+    [self.view insertSubview:borderToShow belowSubview:mainMenu];
+    [self.view addSubview:borderToShow2];
+    [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
@@ -243,13 +248,13 @@
     
     CGFloat scale = 1.0 - (_lastScale - [(UIPinchGestureRecognizer*)sender scale]);
     
-    CGAffineTransform currentTransform = ScreenToShow.transform;
-    CGAffineTransform currentTransform2 = ScreenToShow2.transform;
+    CGAffineTransform currentTransform = screenToShow.transform;
+    CGAffineTransform currentTransform2 = screenToShow2.transform;
     CGAffineTransform newTransform = CGAffineTransformScale(currentTransform, scale, scale);
     CGAffineTransform newTransform2 = CGAffineTransformScale(currentTransform2, scale, scale);
     
-    [ScreenToShow setTransform:newTransform];
-    [ScreenToShow2 setTransform:newTransform2];
+    [screenToShow setTransform:newTransform];
+    [screenToShow2 setTransform:newTransform2];
     //    ScreenToShow.center = pinchRecognizer.view.center;
     _lastScale = [(UIPinchGestureRecognizer*)sender scale];
 }
@@ -260,14 +265,14 @@
     CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:canvas];
     
     if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
-        _firstX = [ScreenToShow center].x;
-        _firstY = [ScreenToShow center].y;
+        _firstX = [screenToShow center].x;
+        _firstY = [screenToShow center].y;
     }
     
     translatedPoint = CGPointMake(_firstX+translatedPoint.x, _firstY+translatedPoint.y);
     
-    [ScreenToShow setCenter:translatedPoint];
-    [ScreenToShow2 setCenter:translatedPoint];
+    [screenToShow setCenter:translatedPoint];
+    [screenToShow2 setCenter:translatedPoint];
 }
 
 
@@ -376,7 +381,7 @@
         [self convert6144_n_rgb:10];
     }
     
-    else if (incomingFileSize > 19456 || isLoadedFileIsPNG) {
+    else if (isLoadedFilePNG) {
         
         RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
         UIImage *incomingImage = [UIImage imageWithData:currentData];
@@ -455,10 +460,10 @@
 -(void)flickerMode {
     
 
-    [self.view addSubview :ScreenToShow];
+    [self.view addSubview :screenToShow];
 //    [ScreenToShow removeFromSuperview];
     
-    [self.view addSubview:ScreenToShow2];
+    [self.view addSubview:screenToShow2];
 //    [ScreenToShow2 removeFromSuperview];
     
     
@@ -483,20 +488,20 @@
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     [convertedImage openZX_img_mgX:currentData];
     
-    ScreenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow.image = image01;
-    ScreenToShow.alpha = 1.0;
-    ScreenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow.image = image01;
+    screenToShow.alpha = 1.0;
+    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    ScreenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    ScreenToShow2.image = image02;
-    ScreenToShow2.alpha = 0.5;
-    ScreenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow2.image = image02;
+    screenToShow2.alpha = 0.5;
+    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    [self.view addSubview:ScreenToShow];
-    [self.view insertSubview:ScreenToShow belowSubview:mainMenu];
-    [self.view addSubview:ScreenToShow2];
-    [self.view insertSubview:ScreenToShow2 belowSubview:mainMenu];
+    [self.view addSubview:screenToShow];
+    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+    [self.view addSubview:screenToShow2];
+    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
 
 //    [self showMenu];
     
@@ -645,7 +650,7 @@
     mainMenu.frame = CGRectMake(0, 0, 80.0, 60.0);
     
     [self.view addSubview:mainMenu];
-    [self.view insertSubview:mainMenu aboveSubview:BorderToShow2];
+    [self.view insertSubview:mainMenu aboveSubview:borderToShow2];
     
 }
 
