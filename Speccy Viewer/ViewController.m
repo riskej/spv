@@ -526,7 +526,7 @@
         flickerImages.animationDuration = 1;
     
     flickerImages.animationRepeatCount = 0;
-    flickerImages.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    flickerImages.transform = CGAffineTransformMakeScale(2.0, 2.0);
     [flickerImages startAnimating];
     
     [self.view addSubview:flickerImages];
