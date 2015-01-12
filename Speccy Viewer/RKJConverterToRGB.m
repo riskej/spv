@@ -477,7 +477,7 @@
             UInt32 * inputPixel_secondImage_noFlash = inputPixels_secondImage_noFlash + adr;
             UInt32 * inputPixel_secondImage_invertedFlash = inputPixels_secondImage_invertedFlash + adr;
             for(int i=0;i<numberBytes;i++) {
-                UInt32 a=*inputPixel_firstImage_noFlash;
+                UInt32 a=*inputPixel_firstImage_noFlash ^ 0xffffff;
                 *inputPixel_firstImage_noFlash=*inputPixel_secondImage_noFlash;
                 *inputPixel_secondImage_noFlash=a;
                 
@@ -531,10 +531,9 @@
     UInt32 * inputPixels_firstImage_noFlash;
     UInt32 * inputPixels_firstImage_invertedFlash;
     
-    NSUInteger colorPalettePulsar [16] = {0x0, 0xca0000, 0x0000ca, 0xca00ca, 0x00ca00, 0xcaca00, 0x00caca, 0xcacaca,
-        0x0, 0xfe0000, 0x0000fe, 0xfe00fe, 0x00fe00, 0xfefe00, 0x00fefe, 0xfefefe};
-    
-    bool isInterlaceMode=true;
+//    NSUInteger colorGigaPalettePulsar [9] = {0x0, 0x76, 0x9f, 0x76, 0xcd, 0xe9, 0x9f, 0xe9, 0xff};
+//    NSUInteger colorGigaPalettePulsar [16] = {0x0, 0x76, 0x00, 0x9f, 0x76, 0xcd, 0x76, 0xe9, 0x00, 0x76, 0x00, 0x9f, 0x9f, 0xe9, 0x9f, 0xff};
+//    00,76,CD,E9,FF,9F
     
     NSUInteger inputWidth = 256*kRetina;
     NSUInteger inputHeight = 192*kRetina;
@@ -600,31 +599,55 @@
             
             NSUInteger byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
             NSUInteger atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
-            bool flash1 = atr1 & 128;
+            NSUInteger flash1 = atr1 & 128;
             NSUInteger bright1 = atr1 & 64 ? 8 : 0;
-            NSUInteger ink1=(UInt32)colorPalettePulsar [(atr1 & 7) + bright1];
-            NSUInteger paper1=(UInt32)colorPalettePulsar [(atr1 >> 3) & 7 + bright1];
             
             NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
             NSUInteger atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
-            bool flash2 = atr2 & 128;
+            NSUInteger flash2 = atr2 & 128;
             NSUInteger bright2 = atr2 & 64 ? 8 : 0;
-            NSUInteger ink2=(UInt32)colorPalettePulsar [(atr2 & 7) + bright2];
-            NSUInteger paper2=(UInt32)colorPalettePulsar [(atr2 >> 3) & 7 + bright2];
+            
+            // i - ink , p - paper
+            UInt32 i1i2=0x123456;//[self calculateColorForGiga:atr1 :atr2];
+            UInt32 i1p2=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
+            UInt32 p1i2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :atr2];
+            UInt32 p1p2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :(bright2|((atr2>>3)&7))];
+            
             int xx=0;
             for (int xBit=128; xBit>0; xBit/=2,xx++) {
-                UInt32 val_1_0=byte1 & xBit ? (int)ink1 : (int)paper1;
-                UInt32 val_1_1=(bool) (byte1 & xBit) ^ flash1 ? (int)ink1 : (int)paper1;
-                UInt32 val_2_0=byte2 & xBit ? (int)ink2 : (int)paper2;
-                UInt32 val_2_1=(bool) (byte2 & xBit) ^ flash2 ? (int)ink2 : (int)paper2;
+                UInt32 val1 = 0;
+                UInt32 val2 = 0;
+                int px=byte1 & xBit ? 1 : 0;
+                px+=byte2 & xBit ? 2 : 0;
+                switch(px){
+                    case 0: val1=p1p2;
+                        break;
+                    case 1: val1=i1p2;
+                        break;
+                    case 2: val1=p1i2;
+                        break;
+                    case 3: val1=i1i2;
+                        break;
+                }
+                px=px ^ (flash1>>7) ^ (flash2>>6);
+                switch(px){
+                    case 0: val2=p1p2;
+                        break;
+                    case 1: val2=i1p2;
+                        break;
+                    case 2: val2=p1i2;
+                        break;
+                    case 3: val2=i1i2;
+                        break;
+                }
                 for(int yRetina=0;yRetina<kRetina;yRetina++)
                 {
                     int adr = (line * kRetina + yRetina) * inputWidth + (xchar * 8 +xx) * kRetina;
                     UInt32 * inputPixel_firstImage_noFlash = inputPixels_firstImage_noFlash +adr;
                     UInt32 * inputPixel_firstImage_invertedFlash = inputPixels_firstImage_invertedFlash +adr;
                     for(int xRetina=0;xRetina<kRetina;xRetina++) {
-                        *inputPixel_firstImage_noFlash++ = val_1_0;
-                        *inputPixel_firstImage_invertedFlash++ = val_1_1;
+                        *inputPixel_firstImage_noFlash++ = val1;
+                        *inputPixel_firstImage_invertedFlash++ = val2;
                     }
                 }
             }
@@ -807,7 +830,16 @@
     
 }
 
-
+-(int)calculateColorForGiga:(int)col1 :(int)col2 {
+    
+    NSUInteger colorGigaPalettePulsar [16] = {0x0, 0x76, 0x00, 0x9f, 0x76, 0xcd, 0x76, 0xe9, 0x00, 0x76, 0x00, 0x9f, 0x9f, 0xe9, 0x9f, 0xff};
+    
+    int r=colorGigaPalettePulsar[4*(((col1&64)>>5) + ((col1>>1) & 1)) + ((col2&64)>>5) + ((col2>>1) & 1)];
+    int g=colorGigaPalettePulsar[4*(((col1&64)>>5) + ((col1>>2) & 1)) + ((col2&64)>>5) + ((col2>>2) & 1)];
+    int b=colorGigaPalettePulsar[4*(((col1&64)>>5) + (col1 & 1)) + ((col2&64)>>5) + (col2 & 1)];
+    int rgb=(b<<16) | (g<<8) | r;
+    return rgb;
+}
 -(void)calculateAddressForPixel:(int)line andMode:(int)mode {
     
     shiftPixelAdress = 2048*((line & 192) >> 6) + 32* ((line >> 3) & 7) + 256 * (line & 7);

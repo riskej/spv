@@ -23,6 +23,7 @@
 - (void) openZX_scr6144_n_rgb:(NSData*)datafile;
 - (void) openZX_scr6912:(NSData*)datafile;
 - (void) openZX_img_mgX:(NSData*)datafile;
+- (void) openZX_img_mgX_noflic:(NSData*)datafile;
 - (void) openZX_img_mg1:(NSData*)datafile;
 - (void) openZX_chr$:   (NSData*)datafile;
 -(void) convertPNGtoSCR:(UIImage *)inputImage;
