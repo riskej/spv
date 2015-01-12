@@ -140,6 +140,7 @@
 - (void) convertChr$:(int)mode_scr height:(int)height width:(int)width {
     
     //    NSLog(@"URL in view: %@", currentData);
+    self.view.backgroundColor = [UIColor blackColor];
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
@@ -164,6 +165,8 @@
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     [self.view addSubview:screenToShow2];
     [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+    
+    isNoflicMode = YES;
     
 }
 
@@ -359,6 +362,7 @@
     else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
         [self convertChr$:9 height:ident[4] width:ident[5]];
     }
+    
     else if (incomingFileSize == 6144) {
         self.view.backgroundColor = [UIColor blackColor];
         [self convert6144_n_rgb:1];
