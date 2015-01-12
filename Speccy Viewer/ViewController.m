@@ -26,12 +26,15 @@
     int kRetina;
     BOOL isLoadedFilePNG;
     BOOL isFlashImage;
+    BOOL is6912Image;
     DBChooserResult *givenScreen;
     UIActivityViewController *shareScoresController;
     UIButton *mainMenu;
     NSUInteger incomingFileSize;
     UIImage *image01;
     UIImage *image02;
+    UIImage *imageForNoflicDemonstration01;
+    UIImage *imageForNoflicDemonstration02;
     BOOL check;
     BOOL isNoflicMode;
     CADisplayLink *theTimer;
@@ -130,6 +133,7 @@
     
     isNoflicMode = NO;
     isFlashImage = YES;
+    is6912Image = YES;
     [self showFlickeringPicture];
 }
 
@@ -167,7 +171,7 @@
 - (void) convertImgMgx:(int) mode_scr {
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    convertedImage.mode_scr=mode_scr;
+    convertedImage.mode_scr = mode_scr;
     convertedImage.kRetina = kRetina;
     [convertedImage openZX_img_mgX:currentData];
     
@@ -192,6 +196,13 @@
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
+    
+    convertedImage.mode_scr = mode_scr;
+    convertedImage.kRetina = kRetina;
+    [convertedImage openZX_img_mgX_noflic:currentData];
+    
+    imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
+    imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
     
     isNoflicMode = NO;
     isFlashImage = NO;
@@ -480,7 +491,7 @@
 //    UITouch *touch = [[event allTouches] anyObject];
 //    CGPoint touchCoordinates = [touch locationInView:self.view];
     
-    if (!isNoflicMode && incomingFileSize > 12288 && image01 != nil) {
+    if (!isNoflicMode && image01 != nil) {
         [flickerImages removeFromSuperview];
         [self showNoflicPicture];
         isNoflicMode = YES;
@@ -490,28 +501,40 @@
 
 -(void)showNoflicPicture {
     
-    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    convertedImage.mode_scr=6;
-    convertedImage.kRetina = kRetina;
-    [convertedImage openZX_img_mgX_noflic:currentData];
+//    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+//    convertedImage.mode_scr=6;
+//    convertedImage.kRetina = kRetina;
+//    [convertedImage openZX_img_mgX_noflic:currentData];
+//    
+//    UIImage *newNoflicImage = convertedImage.FinallyProcessedImage;
+//    UIImage *newNoflicImage2 = convertedImage.FinallyProcessedImage2;
     
-    UIImage *newNoflicImage = convertedImage.FinallyProcessedImage;
-    UIImage *newNoflicImage2 = convertedImage.FinallyProcessedImage2;
+//    image01 = imageForNoflicDemonstration01;
+//    image02 = imageForNoflicDemonstration02;
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    screenToShow.image = newNoflicImage;
+    if (!is6912Image)
+        screenToShow.image = imageForNoflicDemonstration01;
+    else {
+        screenToShow.image = image01;
+    }
     screenToShow.alpha = 1.0;
     screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-//    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-//    screenToShow2.image = newNoflicImage2;
-//    screenToShow2.alpha = 0.5;
-//    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    if (!is6912Image)
+        screenToShow.image = imageForNoflicDemonstration02;
+    else {
+        screenToShow.image = image02;
+        is6912Image = NO;
+    }
+    screenToShow2.alpha = 0.5;
+    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
-//    [self.view addSubview:screenToShow2];
-//    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+    [self.view addSubview:screenToShow2];
+    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
 
 //    [self showMenu];
     
@@ -528,10 +551,10 @@
         flickerImages.animationDuration = 0.01;
     
     else
-        flickerImages.animationDuration = 1;
+        flickerImages.animationDuration = 0.83;
     
     flickerImages.animationRepeatCount = 0;
-    flickerImages.transform = CGAffineTransformMakeScale(2.0, 2.0);
+    flickerImages.transform = CGAffineTransformMakeScale(1.3, 1.3);
     [flickerImages startAnimating];
     
     [self.view addSubview:flickerImages];
