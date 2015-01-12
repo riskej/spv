@@ -536,20 +536,20 @@
     screenToShow.alpha = 1.0;
     screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    if (!is6912Image)
-        screenToShow.image = imageForNoflicDemonstration02;
-    else {
-        screenToShow.image = image02;
-        is6912Image = NO;
-    }
-    screenToShow2.alpha = 0.5;
-    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
-    
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     
     if (!isMG1Image) {
+        screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+        if (!is6912Image)
+            screenToShow.image = imageForNoflicDemonstration02;
+        else {
+            screenToShow.image = image02;
+            is6912Image = NO;
+        }
+        screenToShow2.alpha = 0.5;
+        screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+        
         [self.view addSubview:screenToShow2];
         [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
     }
