@@ -27,6 +27,7 @@
     BOOL isLoadedFilePNG;
     BOOL isFlashImage;
     BOOL is6912Image;
+    BOOL isMG1Image;
     DBChooserResult *givenScreen;
     UIActivityViewController *shareScoresController;
     UIButton *mainMenu;
@@ -67,7 +68,7 @@
     // Dropbox Drop-Ins custom object
     dropboxChooserInView = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
-    kRetina=2;
+    kRetina = 2;
 
     self.view.backgroundColor = [UIColor blackColor];
     
@@ -134,6 +135,7 @@
     isNoflicMode = NO;
     isFlashImage = YES;
     is6912Image = YES;
+    isMG1Image = NO;
     [self showFlickeringPicture];
 }
 
@@ -210,6 +212,7 @@
     isNoflicMode = NO;
     isFlashImage = NO;
     is6912Image = NO;
+    isMG1Image = NO;
     [self showFlickeringPicture];
     
 }
@@ -241,11 +244,18 @@
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
     
+    convertedImage.mode_scr = 7;
+    convertedImage.kRetina = kRetina;
+    [convertedImage openZX_img_mg1_noflic:currentData];
+    
+    imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
+//    imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
+    
     isNoflicMode = NO;
     isFlashImage = NO;
+    is6912Image = NO;
+    isMG1Image = YES;
     [self showFlickeringPicture];
-    
-//        [self initializeTimer];
     
 }
 
@@ -538,8 +548,11 @@
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
-    [self.view addSubview:screenToShow2];
-    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+    
+    if (!isMG1Image) {
+        [self.view addSubview:screenToShow2];
+        [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+    }
 
 //    [self showMenu];
     
