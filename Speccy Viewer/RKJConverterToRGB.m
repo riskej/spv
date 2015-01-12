@@ -1004,8 +1004,8 @@
     //    free(cntCol);
     //    free(byteData);
     
-    //    CGColorSpaceRelease(colorSpace);
-    //    CGContextRelease(context);
+//        CGColorSpaceRelease(colorSpace);
+//        CGContextRelease(context);
     
 }
 

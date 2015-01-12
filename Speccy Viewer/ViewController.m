@@ -206,6 +206,7 @@
     
     isNoflicMode = NO;
     isFlashImage = NO;
+    is6912Image = NO;
     [self showFlickeringPicture];
     
 }
@@ -809,22 +810,22 @@ loadMetadataFailedWithError:(NSError *)error {
              
              // filename
 //             nameOfIncomingFile = results[2];
-//             
-//             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"png"];
-//             NSRange range = [nameOfIncomingFile rangeOfCharacterFromSet:cset];
-//             if (range.location == NSNotFound) {
-//                 isLoadedFileIsPNG = NO;
-//             } else {
-//                 isLoadedFileIsPNG = YES;
-//             }
-//
-//             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@"PNG"];
-//             NSRange range2 = [nameOfIncomingFile rangeOfCharacterFromSet:cset2];
-//             if (range2.location == NSNotFound) {
-//                 isLoadedFileIsPNG = NO;
-//             } else {
-//                 isLoadedFileIsPNG = YES;
-//             }
+             
+             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"png"];
+             NSRange range = [givenScreen.name rangeOfCharacterFromSet:cset];
+             if (range.location == NSNotFound) {
+                 isLoadedFilePNG = NO;
+             } else {
+                 isLoadedFilePNG = YES;
+             }
+
+             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@"PNG"];
+             NSRange range2 = [givenScreen.name rangeOfCharacterFromSet:cset2];
+             if (range2.location == NSNotFound) {
+                 isLoadedFilePNG = NO;
+             } else {
+                 isLoadedFilePNG = YES;
+             }
              
 //             NSString *incomingString = [givenScreen.link absoluteString];
 //             NSLog(@"Link: %@", incomingString);
@@ -838,6 +839,7 @@ loadMetadataFailedWithError:(NSError *)error {
                  self.restClient.delegate = self;
                  
                  currentData = [NSData dataWithContentsOfURL:givenScreen.link];
+                 NSLog(@"DBLink: %@", givenScreen.name);
                  [self checkingForFileSize];
              }
              else
