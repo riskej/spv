@@ -29,8 +29,8 @@
 		0FA615461A5E664500DE7675 /* Speccy_ViewerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615451A5E664500DE7675 /* Speccy_ViewerTests.m */; };
 		0FA615511A5E679200DE7675 /* RKJConverterToRGB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */; };
 		0FA615541A5E682400DE7675 /* splash_iphone5.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FA615531A5E682400DE7675 /* splash_iphone5.png */; };
-		BF1891761A63EE9900862693 /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BF1891741A63EE9800862693 /* DBChooser.bundle */; };
-		BF1891771A63EE9900862693 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1891751A63EE9800862693 /* DBChooser.framework */; };
+		84FB665E1A63F30C003C9766 /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 84FB665C1A63F30C003C9766 /* DBChooser.bundle */; };
+		84FB665F1A63F30C003C9766 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84FB665D1A63F30C003C9766 /* DBChooser.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,8 +74,8 @@
 		0FA6154F1A5E679200DE7675 /* RKJConverterToRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RKJConverterToRGB.h; sourceTree = "<group>"; };
 		0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RKJConverterToRGB.m; sourceTree = "<group>"; };
 		0FA615531A5E682400DE7675 /* splash_iphone5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash_iphone5.png; path = Files/splash_iphone5.png; sourceTree = "<group>"; };
-		BF1891741A63EE9800862693 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = DBChooser.bundle; path = "Speccy Viewer/DBChooser.bundle"; sourceTree = "<group>"; };
-		BF1891751A63EE9800862693 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
+		84FB665C1A63F30C003C9766 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = DBChooser.bundle; path = "Speccy Viewer/DBChooser.bundle"; sourceTree = "<group>"; };
+		84FB665D1A63F30C003C9766 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,7 @@
 			files = (
 				0F28394D1A639A430055BD56 /* DropboxSDK.framework in Frameworks */,
 				0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */,
-				BF1891771A63EE9900862693 /* DBChooser.framework in Frameworks */,
+				84FB665F1A63F30C003C9766 /* DBChooser.framework in Frameworks */,
 				0F32AF141A611A5A0049E46F /* UIKit.framework in Frameworks */,
 				0F32AF121A611A4D0049E46F /* CoreGraphics.framework in Frameworks */,
 				0F32AF101A611A400049E46F /* Foundation.framework in Frameworks */,
@@ -115,8 +115,8 @@
 		0F32AF151A611A640049E46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BF1891741A63EE9800862693 /* DBChooser.bundle */,
-				BF1891751A63EE9800862693 /* DBChooser.framework */,
+				84FB665C1A63F30C003C9766 /* DBChooser.bundle */,
+				84FB665D1A63F30C003C9766 /* DBChooser.framework */,
 				0F28394A1A639A430055BD56 /* DropboxSDK.framework */,
 				0F5B9A5A1A6172E400C3BDC2 /* Security.framework */,
 				0F32AF131A611A5A0049E46F /* UIKit.framework */,
@@ -300,7 +300,7 @@
 				0F5B9A581A615D2E00C3BDC2 /* btn_saveSCR@2x.png in Resources */,
 				0F5B9A661A62C17900C3BDC2 /* btn_openfile@2x.png in Resources */,
 				0F5B9A531A615B0500C3BDC2 /* btn_saveToCamerRoll@2x.png in Resources */,
-				BF1891761A63EE9900862693 /* DBChooser.bundle in Resources */,
+				84FB665E1A63F30C003C9766 /* DBChooser.bundle in Resources */,
 				0F5B9A551A615C5600C3BDC2 /* btn_savePNG@2x.png in Resources */,
 				0FA6153A1A5E664500DE7675 /* LaunchScreen.xib in Resources */,
 				0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */,
@@ -469,6 +469,8 @@
 					Viewer,
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 				);
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
@@ -484,6 +486,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
 					"$(PROJECT_DIR)/Speccy",

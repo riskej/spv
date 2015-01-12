@@ -25,6 +25,7 @@
 {
     int kRetina;
     BOOL isLoadedFilePNG;
+    BOOL isFlashImage;
     DBChooserResult *givenScreen;
     UIActivityViewController *shareScoresController;
     UIButton *mainMenu;
@@ -112,21 +113,24 @@
     [convertedImage openZX_scr6912:currentData];
     
     image01 = convertedImage.FinallyProcessedImage;
-    image02 = convertedImage.FinallyProcessedImage;
+    image02 = convertedImage.FinallyProcessedImage2;
     
-    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    screenToShow.image = convertedImage.FinallyProcessedImage;
-    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+//    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+//    screenToShow.image = convertedImage.FinallyProcessedImage;
+//    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+//    
+//    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+//    screenToShow2.image = convertedImage.FinallyProcessedImage;
+//    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+//    
+//    [self.view addSubview:screenToShow];
+//    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+//    [self.view addSubview:screenToShow2];
+//    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
     
-    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    screenToShow2.image = convertedImage.FinallyProcessedImage;
-    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
-    
-    [self.view addSubview:screenToShow];
-    [self.view insertSubview:screenToShow belowSubview:mainMenu];
-    [self.view addSubview:screenToShow2];
-    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
-    
+    isNoflicMode = NO;
+    isFlashImage = YES;
+    [self showFlickeringPicture];
 }
 
 - (void) convertChr$:(int)mode_scr height:(int)height width:(int)width {
@@ -190,6 +194,7 @@
     image02 = convertedImage.FinallyProcessedImage2;
     
     isNoflicMode = NO;
+    isFlashImage = NO;
     [self showFlickeringPicture];
     
 }
@@ -222,6 +227,7 @@
     image02 = convertedImage.FinallyProcessedImage2;
     
     isNoflicMode = NO;
+    isFlashImage = NO;
     [self showFlickeringPicture];
     
 //        [self initializeTimer];
@@ -238,7 +244,6 @@
 -(BOOL)prefersStatusBarHidden{
     return YES;
 }
-
 
 -(void)scale:(id)sender {
     
@@ -514,8 +519,12 @@
     flickerImages.animationImages = [NSArray arrayWithObjects:
                                      image01, image02,
                                      nil];
+    if (!isFlashImage)
+        flickerImages.animationDuration = 0.01;
     
-    flickerImages.animationDuration = 0.01;
+    else
+        flickerImages.animationDuration = 1;
+    
     flickerImages.animationRepeatCount = 0;
     flickerImages.transform = CGAffineTransformMakeScale(1.3, 1.3);
     [flickerImages startAnimating];
@@ -824,6 +833,7 @@ loadMetadataFailedWithError:(NSError *)error {
 
      }];
 }
+
 
 
 @end
