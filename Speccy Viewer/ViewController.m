@@ -491,22 +491,27 @@
 -(void)showNoflicPicture {
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    [convertedImage openZX_img_mgX:currentData];
+    convertedImage.mode_scr=3;
+    convertedImage.kRetina = kRetina;
+    [convertedImage openZX_img_mgX_noflic:currentData];
+    
+    UIImage *newNoflicImage = convertedImage.FinallyProcessedImage;
+    UIImage *newNoflicImage2 = convertedImage.FinallyProcessedImage2;
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    screenToShow.image = image01;
+    screenToShow.image = newNoflicImage;
     screenToShow.alpha = 1.0;
     screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
-    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    screenToShow2.image = image02;
-    screenToShow2.alpha = 0.5;
-    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+//    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+//    screenToShow2.image = newNoflicImage2;
+//    screenToShow2.alpha = 0.5;
+//    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
-    [self.view addSubview:screenToShow2];
-    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+//    [self.view addSubview:screenToShow2];
+//    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
 
 //    [self showMenu];
     

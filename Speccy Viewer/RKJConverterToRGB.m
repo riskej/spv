@@ -477,7 +477,7 @@
             UInt32 * inputPixel_secondImage_noFlash = inputPixels_secondImage_noFlash + adr;
             UInt32 * inputPixel_secondImage_invertedFlash = inputPixels_secondImage_invertedFlash + adr;
             for(int i=0;i<numberBytes;i++) {
-                UInt32 a=*inputPixel_firstImage_noFlash ^ 0xffffff;
+                UInt32 a=*inputPixel_firstImage_noFlash;// ^ 0xffffff;
                 *inputPixel_firstImage_noFlash=*inputPixel_secondImage_noFlash;
                 *inputPixel_secondImage_noFlash=a;
                 
