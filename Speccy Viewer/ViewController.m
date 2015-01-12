@@ -491,7 +491,7 @@
 -(void)showNoflicPicture {
     
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    convertedImage.mode_scr=3;
+    convertedImage.mode_scr=6;
     convertedImage.kRetina = kRetina;
     [convertedImage openZX_img_mgX_noflic:currentData];
     

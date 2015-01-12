@@ -600,15 +600,15 @@
             NSUInteger byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
             NSUInteger atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
             NSUInteger flash1 = atr1 & 128;
-            NSUInteger bright1 = atr1 & 64 ? 8 : 0;
+            NSUInteger bright1 = atr1 & 64;
             
             NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
             NSUInteger atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
             NSUInteger flash2 = atr2 & 128;
-            NSUInteger bright2 = atr2 & 64 ? 8 : 0;
+            NSUInteger bright2 = atr2 & 64;
             
             // i - ink , p - paper
-            UInt32 i1i2=0x123456;//[self calculateColorForGiga:atr1 :atr2];
+            UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
             UInt32 i1p2=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
             UInt32 p1i2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :atr2];
             UInt32 p1p2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :(bright2|((atr2>>3)&7))];
