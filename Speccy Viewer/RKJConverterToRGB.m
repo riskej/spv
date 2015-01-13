@@ -254,9 +254,6 @@
         
         for (int xchar=0; xchar<xMax; xchar++) {
             
-            //            UInt32 * inputPixel = inputPixels + ychar*8*inputBytesPerRow + (xchar*8*kRetina);
-            
-            
             NSUInteger nchar = ychar * xMax + xchar;
             
             if (mode==8) {
@@ -278,7 +275,7 @@
                     }
                 }
             }
-            
+
             if (mode==9) {
                 for(int ypix=0;ypix<8;ypix++) {
                     NSUInteger adr = ((ychar * 8 + ypix) * kRetina) * inputWidth  + (xchar*8*kRetina);
@@ -303,15 +300,66 @@
                 }
             }
             
-            
-            
+            if (mode==18) {
+                for(int ypix=0;ypix<8;ypix++) {
+                    int adr = ((ychar * 8 + ypix) * kRetina) * inputWidth  + (xchar*8*kRetina);
+                    int byte1 = byteData[7+nchar*18+ypix];
+                    int atr1 = byteData[7+nchar*18+8];
+                    int flash1 = atr1 & 128;
+                    int bright1 = atr1 & 64;
+    
+                    int byte2 = byteData[7+nchar*18+9+ypix];
+                    int atr2 = byteData[7+nchar*18+17];
+                    int flash2 = atr1 & 128;
+                    int bright2 = atr1 & 64;
+                    
+                    // i - ink , p - paper
+                    UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
+                    UInt32 i1p2=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
+                    UInt32 p1i2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :atr2];
+                    UInt32 p1p2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :(bright2|((atr2>>3)&7))];
+                    
+                    int xpix=0;
+                    for (int xBit=128; xBit>0; xBit/=2,xpix++) {
+                        UInt32 val1 = 0;
+                        UInt32 val2 = 0;
+                        int px=byte1 & xBit ? 1 : 0;
+                        px+=byte2 & xBit ? 2 : 0;
+                        switch(px){
+                            case 0: val1=p1p2;
+                                break;
+                            case 1: val1=i1p2;
+                                break;
+                            case 2: val1=p1i2;
+                                break;
+                            case 3: val1=i1i2;
+                                break;
+                        }
+                        px=px ^ (flash1>>7) ^ (flash2>>6);
+                        switch(px){
+                            case 0: val2=p1p2;
+                                break;
+                            case 1: val2=i1p2;
+                                break;
+                            case 2: val2=p1i2;
+                                break;
+                            case 3: val2=i1i2;
+                                break;
+                        }
+                        for(int yRetina=0;yRetina<kRetina;yRetina++)
+                        {
+                            UInt32 * inputPixel_noFlash = inputPixels + adr + yRetina * inputWidth + xpix * kRetina;
+                            UInt32 * inputPixel_invertedFlash = inputPixels2 + + adr + yRetina * inputWidth + xpix * kRetina;
+                            for(int xRetina=0;xRetina<kRetina;xRetina++) {
+                                *inputPixel_noFlash++ = val1;
+                                *inputPixel_invertedFlash++ = val2;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        
     }
-    
-    
-    
-    
     
     CGContextRef context = CGBitmapContextCreate(inputPixels, inputWidth, inputHeight,
                                                  bitsPerComponent, inputBytesPerRow, colorSpace,
@@ -325,12 +373,7 @@
     
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
-    
-    
-    
-    
     //
-    
     CGContextRef context2 = CGBitmapContextCreate(inputPixels2, inputWidth, inputHeight,
                                                   bitsPerComponent, inputBytesPerRow, colorSpace,
                                                   kCGImageAlphaNoneSkipLast | kCGBitmapByteOrder32Big);
@@ -348,7 +391,6 @@
     CGContextRelease(context2);
     CGImageRelease(newCGImage);
     CGImageRelease(newCGImage2);
-    
 }
 
 
@@ -593,15 +635,15 @@
         
         for (int xchar=0; xchar<32; xchar++) {
             
-            NSUInteger byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
-            NSUInteger atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
-            NSUInteger flash1 = atr1 & 128;
-            NSUInteger bright1 = atr1 & 64;
+            int byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
+            int atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
+            int flash1 = atr1 & 128;
+            int bright1 = atr1 & 64;
             
-            NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
-            NSUInteger atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
-            NSUInteger flash2 = atr2 & 128;
-            NSUInteger bright2 = atr2 & 64;
+            int byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
+            int atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
+            int flash2 = atr2 & 128;
+            int bright2 = atr2 & 64;
             
             // i - ink , p - paper
             UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
@@ -863,8 +905,8 @@
     
     NSUInteger shift_1_Zxchar=0;
     NSUInteger shift_8_Zxchar=0;
-    NSUInteger atr1=0;
-    NSUInteger atr2=0;
+    int atr1=0;
+    int atr2=0;
     
     for (int line=0; line<192; line++) {
         
@@ -882,11 +924,11 @@
                 atr1 = byteData[firstByteOf_8_CharsArrayOfFirstScreen + shift_8_Zxchar + (xchar & 15)];
                 atr2 = byteData[firstByteOf_8_CharsArrayOfSecondScreen + shift_8_Zxchar + (xchar & 15)];
             }
-            NSUInteger byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
-            NSUInteger bright1 = atr1 & 64;
+            int byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
+            int bright1 = atr1 & 64;
             
-            NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
-            NSUInteger bright2 = atr2 & 64;
+            int byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
+            int bright2 = atr2 & 64;
             
             // i - ink , p - paper
             UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
@@ -942,7 +984,7 @@
 
 -(int)calculateColorForGiga:(int)col1 :(int)col2 {
     
-    NSUInteger colorGigaPalettePulsar [16] = {0x0, 0x76, 0x00, 0x9f, 0x76, 0xcd, 0x76, 0xe9, 0x00, 0x76, 0x00, 0x9f, 0x9f, 0xe9, 0x9f, 0xff};
+    int colorGigaPalettePulsar [16] = {0x0, 0x76, 0x00, 0x9f, 0x76, 0xcd, 0x76, 0xe9, 0x00, 0x76, 0x00, 0x9f, 0x9f, 0xe9, 0x9f, 0xff};
     
     int r=colorGigaPalettePulsar[4*(((col1&64)>>5) + ((col1>>1) & 1)) + ((col2&64)>>5) + ((col2>>1) & 1)];
     int g=colorGigaPalettePulsar[4*(((col1&64)>>5) + ((col1>>2) & 1)) + ((col2&64)>>5) + ((col2>>2) & 1)];
