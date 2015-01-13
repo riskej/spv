@@ -1150,14 +1150,18 @@
     convertedSpeccyScr01 = [NSData dataWithBytes:(const void *)byteData length:len];
     
     
+    UIImage * processedImage = [UIImage imageWithCGImage:inputCGImage];
+    FinallyProcessedImage2 = processedImage;
+
     // 5. Cleanup
-    //    free(colBuf);
-    //    free(sortCol);
-    //    free(cntCol);
-    //    free(byteData);
+    free(colBuf);
+    free(sortCol);
+    free(cntCol);
+    free(byteData);
     
-//        CGColorSpaceRelease(colorSpace);
-//        CGContextRelease(context);
+    CGColorSpaceRelease(colorSpace);
+    CGImageRelease(inputCGImage);
+    CGContextRelease(context);
     
 }
 

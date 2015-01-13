@@ -259,7 +259,44 @@
     
 }
 
-
+- (void)pngConverter {
+    
+    RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
+    UIImage *incomingImage = [UIImage imageWithData:currentData];
+    [imageToConvert convertPNGtoSCR:incomingImage];
+    image02 =  imageToConvert.FinallyProcessedImage2;
+    
+    currentData = imageToConvert.convertedSpeccyScr01;
+    
+//    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+    imageToConvert.mode_scr=2;
+    imageToConvert.kRetina = kRetina;
+    [imageToConvert openZX_scr6912:currentData];
+    
+    image01 = imageToConvert.FinallyProcessedImage;
+    
+    
+    //    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    //    screenToShow.image = convertedImage.FinallyProcessedImage;
+    //    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    //
+    //    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    //    screenToShow2.image = convertedImage.FinallyProcessedImage;
+    //    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    //
+    //    [self.view addSubview:screenToShow];
+    //    [self.view insertSubview:screenToShow belowSubview:mainMenu];
+    //    [self.view addSubview:screenToShow2];
+    //    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
+    
+    isNoflicMode = NO;
+    isFlashImage = YES;
+    is6912Image = YES;
+    isMG1Image = NO;
+    [self showFlickeringPicture];
+    
+    
+}
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -413,13 +450,7 @@
     }
     
     else if (isLoadedFilePNG) {
-        
-        RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
-        UIImage *incomingImage = [UIImage imageWithData:currentData];
-        [imageToConvert convertPNGtoSCR:incomingImage];
-    
-        currentData = imageToConvert.convertedSpeccyScr01;
-        [self convert6912Screen:2];
+        [self pngConverter];
     }
     
     else {
