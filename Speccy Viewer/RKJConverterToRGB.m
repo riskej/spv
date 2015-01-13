@@ -869,6 +869,8 @@
     for (int line=0; line<192; line++) {
         
         [self calculateAddressForPixel:line andMode:mode_scr];
+        shift_8_Zxchar = (line>>3) * 16;
+        shift_1_Zxchar = line * 16;
         
         for (int xchar=0; xchar<32; xchar++) {
             
@@ -926,17 +928,15 @@
     CGImageRef newCGImage = CGBitmapContextCreateImage(context);
     CGContextDrawImage(context, CGRectMake(0, 0, inputWidth, inputHeight), newCGImage);
     
+    free(inputPixels);
+    
     UIImage * processedImage = [UIImage imageWithCGImage:newCGImage];
-    
-    CGColorSpaceRelease(colorSpace);
-    CGContextRelease(context);
-    
     FinallyProcessedImage = processedImage;
     
-    free(inputPixels);
     free(byteData);
     CGColorSpaceRelease(colorSpace);
     CGImageRelease(newCGImage);
+    CGContextRelease(context);
 }
 
 
