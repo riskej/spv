@@ -1160,7 +1160,7 @@
     free(byteData);
     
     CGColorSpaceRelease(colorSpace);
-    CGImageRelease(inputCGImage);
+//    CGImageRelease(inputCGImage);
     CGContextRelease(context);
     
 }

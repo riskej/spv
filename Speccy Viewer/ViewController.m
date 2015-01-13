@@ -23,6 +23,7 @@
 @implementation ViewController
 
 {
+    NSData *newData;
     int kRetina;
     BOOL isLoadedFilePNG;
     BOOL isFlashImage;
@@ -110,7 +111,8 @@
 - (void) convert6912Screen:(int) mode_scr {
     
     //    NSLog(@"URL in view: %@", currentData);
-    
+    if (!isLoadedFilePNG) {
+
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
     convertedImage.kRetina = kRetina;
@@ -119,24 +121,13 @@
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
     
-//    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-//    screenToShow.image = convertedImage.FinallyProcessedImage;
-//    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
-//    
-//    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-//    screenToShow2.image = convertedImage.FinallyProcessedImage;
-//    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
-//    
-//    [self.view addSubview:screenToShow];
-//    [self.view insertSubview:screenToShow belowSubview:mainMenu];
-//    [self.view addSubview:screenToShow2];
-//    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
     
     isNoflicMode = NO;
     isFlashImage = YES;
     is6912Image = YES;
     isMG1Image = NO;
     [self showFlickeringPicture];
+    }
 }
 
 - (void) convertChr$:(int)mode_scr height:(int)height width:(int)width {
@@ -209,6 +200,7 @@
     imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
     imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
     
+    isLoadedFilePNG = NO;
     isNoflicMode = NO;
     isFlashImage = NO;
     is6912Image = NO;
@@ -251,6 +243,7 @@
     imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
 //    imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
     
+    isLoadedFilePNG = NO;
     isNoflicMode = NO;
     isFlashImage = NO;
     is6912Image = NO;
@@ -261,36 +254,26 @@
 
 - (void)pngConverter {
     
+    self.view.backgroundColor = [UIColor blackColor];
+    
     RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
+    
     UIImage *incomingImage = [UIImage imageWithData:currentData];
     [imageToConvert convertPNGtoSCR:incomingImage];
     image02 =  imageToConvert.FinallyProcessedImage2;
-    
-    currentData = imageToConvert.convertedSpeccyScr01;
-    
+//    image01 =  imageToConvert.FinallyProcessedImage2;
+
+//    currentData = imageToConvert.convertedSpeccyScr01;
+    newData = imageToConvert.convertedSpeccyScr01;
+//
 //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.mode_scr=2;
     imageToConvert.kRetina = kRetina;
-    [imageToConvert openZX_scr6912:currentData];
-    
+    [imageToConvert openZX_scr6912:newData];
     image01 = imageToConvert.FinallyProcessedImage;
     
-    
-    //    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    //    screenToShow.image = convertedImage.FinallyProcessedImage;
-    //    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
-    //
-    //    screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
-    //    screenToShow2.image = convertedImage.FinallyProcessedImage;
-    //    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
-    //
-    //    [self.view addSubview:screenToShow];
-    //    [self.view insertSubview:screenToShow belowSubview:mainMenu];
-    //    [self.view addSubview:screenToShow2];
-    //    [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
-    
     isNoflicMode = NO;
-    isFlashImage = YES;
+    isFlashImage = NO;
     is6912Image = YES;
     isMG1Image = NO;
     [self showFlickeringPicture];
@@ -558,6 +541,10 @@
 //    image01 = imageForNoflicDemonstration01;
 //    image02 = imageForNoflicDemonstration02;
     
+    if (isLoadedFilePNG) {
+        currentData = newData;
+    }
+    
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     if (!is6912Image)
         screenToShow.image = imageForNoflicDemonstration01;
@@ -573,11 +560,18 @@
     if (!isMG1Image) {
         screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
         if (!is6912Image)
-            screenToShow.image = imageForNoflicDemonstration02;
-        else {
-            screenToShow.image = image02;
+            screenToShow2.image = imageForNoflicDemonstration02;
+        
+        else if (!isLoadedFilePNG) {
+            screenToShow2.image = image02;
             is6912Image = NO;
         }
+        
+        else {
+            screenToShow2.image = image01;
+            is6912Image = NO;
+        }
+        
         screenToShow2.alpha = 0.5;
         screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
         
@@ -669,7 +663,10 @@
             UIGraphicsBeginImageContext( newSize );
         
             [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-            [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+                
+                if (!isLoadedFilePNG) {
+                    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+                }
         
             UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
