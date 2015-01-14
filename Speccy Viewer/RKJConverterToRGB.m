@@ -992,6 +992,10 @@
     int rgb=(b<<16) | (g<<8) | r;
     return rgb;
 }
+
+
+
+
 -(void)calculateAddressForPixel:(int)line andMode:(int)mode {
     
     shiftPixelAdress = 2048*((line & 192) >> 6) + 32* ((line >> 3) & 7) + 256 * (line & 7);
@@ -1189,6 +1193,20 @@
         
         //   -===- GIGA & multiGIGA mode -===-
         
+        // Prepape color tables
+        
+        int * tab_bB;
+        tab_bB = (int *) calloc(512, sizeof(int));
+        
+        for(int col1=0; col1<16; col1++) {
+            for(int col2=0; col2<16; col2++) {
+                int rgb=[self calculateColorForGiga_2:col1 :col2];
+                tab_bB[rgb]=col1 * 16 +col2;
+            }
+        }
+        
+        
+        
         for (int chars=0; chars<zxWidth*zxHeight; chars++) {
             int pixs=7 + chars*chrMode;
             int atr=pixs+chrMode-1;
@@ -1198,12 +1216,11 @@
                 
                 for (int xpix=0; xpix<8;xpix++) {
                     int pix=pixels[png+ypix*(int)(width*k)+(int)(xpix*k)];
-                    colR=pix & 255;
-                    colG=(pix>>8)&255;
-                    colB=(pix>>16)&255;
-                    col= colR > 0xf0 ? 64 + 2: colR < 0x80 ? 0 : 2;
-                    col|= colG > 0xf0 ? 64 + 4: colG < 0x80 ? 0 : 4;
-                    col|= colB > 0xf0 ? 64 + 1: colB < 0x80 ? 0 : 1;
+                    
+                    colR=[self calculateBright:pix & 255];
+                    colG=[self calculateBright:(pix>>8)&255];
+                    colB=[self calculateBright:(pix>>16)&255];
+                    col= (colB<<6) | (colG<<3) | colR;
                     colBuf[ix]=col;
                     ix++;
                 }
@@ -1327,4 +1344,23 @@
     return FALSE;
 }
 
+-(int)calculateColorForGiga_2:(int)col1 :(int)col2 {
+    
+    int colorGigaPalettePulsar [16] = {0, 1, 0, 2, 1, 3, 1, 4, 0, 1, 0, 2, 2, 4, 3, 5};
+    
+    int r=colorGigaPalettePulsar[4 * (((col1&8)>>2) + ((col1>>1) & 1)) + ((col2&8)>>2) + ((col2>>1) & 1)];
+    int g=colorGigaPalettePulsar[4 * (((col1&8)>>5) + ((col1>>2) & 1)) + ((col2&8)>>2) + ((col2>>2) & 1)];
+    int b=colorGigaPalettePulsar[4 * (((col1&8)>>5) + (col1 & 1)) + ((col2&8)>>2) + (col2 & 1)];
+    int rgb=(b<<6) | (g<<3) | r;
+    return rgb;
+}
+
+-(int)calculateBright:(int)col {
+    if (col < 0x66) return 0;
+    if (col < 0x8a) return 1;
+    if (col < 0xb6) return 2;
+    if (col < 0xdb) return 3;
+    if (col < 0xf3) return 4;
+    return 5;
+}
 @end
