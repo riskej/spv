@@ -26,6 +26,7 @@
     NSData *newData;
     int kRetina;
     BOOL isLoadedFilePNG;
+    BOOL isDropboxActive;
     BOOL isFlashImage;
     BOOL is6912Image;
     BOOL isMG1Image;
@@ -73,9 +74,12 @@
 
     self.view.backgroundColor = [UIColor blackColor];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(checkingForFileSize)
-                                                 name:UIApplicationDidBecomeActiveNotification object:nil];
+    if (!isDropboxActive) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(checkingForFileSize)
+                                                     name:UIApplicationDidBecomeActiveNotification object:nil];
+    }
+
     
     [self setupTouchInterface];
     
@@ -111,7 +115,7 @@
 - (void) convert6912Screen:(int) mode_scr {
     
     //    NSLog(@"URL in view: %@", currentData);
-    if (!isLoadedFilePNG) {
+
 
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
@@ -127,7 +131,7 @@
     is6912Image = YES;
     isMG1Image = NO;
     [self showFlickeringPicture];
-    }
+    
 }
 
 - (void) convertChr$:(int)mode_scr height:(int)height width:(int)width {
@@ -269,7 +273,7 @@
 //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.mode_scr=2;
     imageToConvert.kRetina = kRetina;
-    [imageToConvert openZX_scr6912:newData];
+    [imageToConvert openZX_chr$:newData];
     image01 = imageToConvert.FinallyProcessedImage;
     
     isNoflicMode = NO;
@@ -329,6 +333,8 @@
 -(void)checkingForFileSize {
     
     //    currentData =  [NSData dataWithContentsOfURL:givenScreen.link];
+//    isLoadedFilePNG=YES;
+//    currentData =  [NSData dataWithContentsOfURL:[NSURL URLWithString :@"https://www.dropbox.com/s/b0nhclsiujcdbxp/13.png?raw=1"]];
     //    [self convert6912Screen:2];
     
     // cls
@@ -848,6 +854,7 @@ loadMetadataFailedWithError:(NSError *)error {
     [[DBChooser defaultChooser] openChooserForLinkType:DBChooserLinkTypeDirect fromViewController:self
                                             completion:^(NSArray *results)
      {
+         isDropboxActive=YES;
          if ([results count]) {
              
              // url
@@ -856,7 +863,7 @@ loadMetadataFailedWithError:(NSError *)error {
              // filename
 //             nameOfIncomingFile = results[2];
              
-             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@"png"];
+             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@".png"];
              NSRange range = [givenScreen.name rangeOfCharacterFromSet:cset];
              if (range.location == NSNotFound) {
                  isLoadedFilePNG = NO;
@@ -864,7 +871,7 @@ loadMetadataFailedWithError:(NSError *)error {
                  isLoadedFilePNG = YES;
              }
 
-             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@"PNG"];
+             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@".PNG"];
              NSRange range2 = [givenScreen.name rangeOfCharacterFromSet:cset2];
              if (range2.location == NSNotFound) {
                  isLoadedFilePNG = NO;
@@ -886,6 +893,7 @@ loadMetadataFailedWithError:(NSError *)error {
                  currentData = [NSData dataWithContentsOfURL:givenScreen.link];
                  NSLog(@"DBLink: %@", givenScreen.name);
                  [self checkingForFileSize];
+                 isDropboxActive=NO;
              }
              else
              {
