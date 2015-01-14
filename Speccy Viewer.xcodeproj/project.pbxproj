@@ -28,6 +28,7 @@
 		0FA615461A5E664500DE7675 /* Speccy_ViewerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615451A5E664500DE7675 /* Speccy_ViewerTests.m */; };
 		0FA615511A5E679200DE7675 /* RKJConverterToRGB.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */; };
 		0FA615541A5E682400DE7675 /* splash_iphone5.png in Resources */ = {isa = PBXBuildFile; fileRef = 0FA615531A5E682400DE7675 /* splash_iphone5.png */; };
+		845828871A671ACF00ADF466 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 845828861A671ACF00ADF466 /* DropboxSDK.framework */; };
 		BF1891A21A66F43A00862693 /* DBChooser.bundle in Resources */ = {isa = PBXBuildFile; fileRef = BF1891A01A66F43A00862693 /* DBChooser.bundle */; };
 		BF1891A31A66F43A00862693 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1891A11A66F43A00862693 /* DBChooser.framework */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,7 @@
 		0FA6154F1A5E679200DE7675 /* RKJConverterToRGB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RKJConverterToRGB.h; sourceTree = "<group>"; };
 		0FA615501A5E679200DE7675 /* RKJConverterToRGB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RKJConverterToRGB.m; sourceTree = "<group>"; };
 		0FA615531A5E682400DE7675 /* splash_iphone5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = splash_iphone5.png; path = Files/splash_iphone5.png; sourceTree = "<group>"; };
+		845828861A671ACF00ADF466 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
 		BF1891A01A66F43A00862693 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = DBChooser.bundle; path = "Speccy Viewer/DBChooser.bundle"; sourceTree = "<group>"; };
 		BF1891A11A66F43A00862693 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,12 +83,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				845828851A67175800ADF466 /* DropboxSDK.framework in Frameworks */,
+				845828871A671ACF00ADF466 /* DropboxSDK.framework in Frameworks */,
 				0F5B9A5B1A6172E400C3BDC2 /* Security.framework in Frameworks */,
 				BF1891A31A66F43A00862693 /* DBChooser.framework in Frameworks */,
 				0F32AF141A611A5A0049E46F /* UIKit.framework in Frameworks */,
 				0F32AF121A611A4D0049E46F /* CoreGraphics.framework in Frameworks */,
-				845828841A67175800ADF466 /* DBChooser.framework in Frameworks */,
 				0F32AF101A611A400049E46F /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,9 +115,9 @@
 		0F32AF151A611A640049E46F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				845828861A671ACF00ADF466 /* DropboxSDK.framework */,
 				BF1891A01A66F43A00862693 /* DBChooser.bundle */,
 				BF1891A11A66F43A00862693 /* DBChooser.framework */,
-				0F28394A1A639A430055BD56 /* DropboxSDK.framework */,
 				0F5B9A5A1A6172E400C3BDC2 /* Security.framework */,
 				0F32AF131A611A5A0049E46F /* UIKit.framework */,
 				0F32AF111A611A4D0049E46F /* CoreGraphics.framework */,
@@ -492,11 +493,17 @@
 					Viewer,
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 				);
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "./**";
+				LIBRARY_SEARCH_PATHS = (
+					./Speccy,
+					"Viewer/**",
+					"./**",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -546,11 +553,17 @@
 					Viewer,
 					"$(PROJECT_DIR)/Speccy",
 					Viewer,
+					"$(PROJECT_DIR)/Speccy",
+					Viewer,
 				);
 				INFOPLIST_FILE = "Speccy Viewer/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = "./**";
+				LIBRARY_SEARCH_PATHS = (
+					./Speccy,
+					"Viewer/**",
+					"./**",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
