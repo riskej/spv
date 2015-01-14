@@ -64,6 +64,8 @@
     [super viewDidLoad];
     // we are fulez
     
+    // riskej's message
+    
     // Dropbox init
 //    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
 //    self.restClient.delegate = self;
