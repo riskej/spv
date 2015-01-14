@@ -62,6 +62,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    // we are fulez
     
     // Dropbox init
 //    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
