@@ -828,7 +828,7 @@
             noflicImageData = image01;
         }
 
-        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], noflicImageData, nil];
+        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picture!"], noflicImageData, nil];
         
 //        if (!shareScoresController)
 //        {
