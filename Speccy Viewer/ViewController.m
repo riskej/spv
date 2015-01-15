@@ -28,6 +28,8 @@
 @implementation ViewController
 
 {
+    NSUInteger inputScreenHeight;
+    NSUInteger inputScreenWidth;
     UILabel *noDataMessage;
     UILabel *noDataMessage2;
     UILabel *noDataMessage3;
@@ -158,8 +160,8 @@
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
     
-    int xx=height*8;
-    int yy=width*8;
+    int yy = height*8;
+    int xx = width*8;
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
     screenToShow.image = convertedImage.FinallyProcessedImage;
@@ -287,6 +289,9 @@
     [imageToConvert openZX_chr$:newData];
     image01 = imageToConvert.FinallyProcessedImage;
     
+    inputScreenHeight = image01.size.height;
+    inputScreenWidth = image01.size.width;
+    
     isNoflicMode = NO;
     isFlashImage = NO;
     is6912Image = YES;
@@ -349,6 +354,8 @@
     //    [self convert6912Screen:2];
     
     // cls
+    inputScreenWidth = 256;
+    inputScreenHeight = 192;
     
     for (UIView *view in self.view.subviews)
     {
@@ -407,7 +414,7 @@
         //          9 - chr$
     }
     else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
-        [self convertChr$:9 height:ident[4] width:ident[5]];
+        [self convertChr$:9 height:ident[5] width:ident[4]];
     }
     
     else if (incomingFileSize == 6144) {
@@ -561,7 +568,7 @@
         currentData = newData;
     }
     
-    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-inputScreenWidth/2, self.view.center.y-inputScreenHeight/2, inputScreenWidth, inputScreenHeight)];
     if (!is6912Image)
         screenToShow.image = imageForNoflicDemonstration01;
     else {
@@ -574,7 +581,7 @@
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     
     if (!isMG1Image) {
-        screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+        screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-inputScreenWidth/2, self.view.center.y-inputScreenHeight/2, inputScreenWidth, inputScreenHeight)];
         if (!is6912Image)
             screenToShow2.image = imageForNoflicDemonstration02;
         
@@ -602,7 +609,7 @@
 
 -(void) showFlickeringPicture {
     
-    flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+    flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-inputScreenWidth/2, self.view.center.y-inputScreenHeight/2, inputScreenWidth, inputScreenHeight)];
 
     flickerImages.animationImages = [NSArray arrayWithObjects:
                                      image01, image02,
