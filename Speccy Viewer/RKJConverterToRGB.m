@@ -1060,7 +1060,7 @@
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
     
     
-    int chrMode=9;
+    NSUInteger chrMode=9;
     int atrOffSet=8;
     int chSize=8;
     
@@ -1086,8 +1086,8 @@
         //   -===- no Giga mode -===-
         
         for (int chars=0; chars<zxWidth*zxHeight; chars++) {
-            int pixs=7 + chars*chrMode;
-            int atr=pixs+atrOffSet;
+            NSUInteger pixs=7 + chars*chrMode;
+            NSUInteger atr=pixs+atrOffSet;
             NSUInteger png=(int)(((int)(chars /zxWidth)) * width * chSize * k) + (int)((chars % zxWidth) * 8 * k);
             int ix=0;
             for (int ypix=0; ypix<8;ypix++) {
@@ -1169,14 +1169,14 @@
         
         //      Optimizing SCR
         
-        for (int ychar=0;ychar<zxHeight;ychar++) {
+        for (NSUInteger ychar=0 ;ychar<zxHeight; ychar++) {
             
             if(ychar>0) {
                 if([self compare:byteData Old:(ychar-1) * zxWidth New:ychar*zxWidth charMode:chrMode]) {
                     [self reverse:byteData withCharN:ychar*zxWidth charMode:chrMode];
                 }
             }
-            for(int xchar=1;xchar<zxWidth;xchar++) {
+            for(NSUInteger xchar=1; xchar<zxWidth; xchar++) {
                 if([self compareHorizontal:byteData Old:(ychar * zxWidth + xchar - 1) New:ychar * zxWidth + xchar charMode:chrMode]) {
                     [self reverse:byteData withCharN:ychar*zxWidth+xchar charMode:chrMode];
                 }
@@ -1205,11 +1205,14 @@
             }
         }
         
-        
+        int diff [4] = {0,0,0,0};
         
         for (int chars=0; chars<zxWidth*zxHeight; chars++) {
-            int pixs=7 + chars*chrMode;
-            int atr=pixs+chrMode-1;
+            NSUInteger pixs1=7 + chars*chrMode;
+            NSUInteger pixs2=pixs1 + chrMode/2;
+            NSUInteger atr1=pixs1+(chrMode/2)-1;
+            NSUInteger atr2=pixs2+(chrMode/2)-1;
+            
             NSUInteger png=((int)(chars /zxWidth)) * width * chSize * k + (chars % zxWidth) * 8 * k;
             int ix=0;
             for (int ypix=0; ypix<8;ypix++) {
@@ -1242,36 +1245,74 @@
                 }
                 if(!flag) sortCol[carry]=colBuf[i], cntCol[carry++]++;
             }
-            //          find 2 most meeted colors
-            int paperVal=0;
-            int paperCnt=0;
-            int inkVal=0;
-            int inkCnt=0;
+            //          find 4 most meeted colors
             
-            for (int i=0;i<carry;i++)
-                if(paperVal<cntCol[i]) paperCnt=i,paperVal=cntCol[i];
-            
-            if (paperVal!=64)
+            for (int iter=0; iter<4; iter++) {
+                int big=cntCol[iter];
+                int iBig=iter;
+                for (int i=iter; i<carry; i++) {
+                    if(cntCol[i]>big) iBig=i, big=cntCol[i];
+                }
+                int temp=cntCol[iter];
+                cntCol[iter]=cntCol[iBig];
+                cntCol[iBig]=temp;
+                temp=sortCol[iter];
+                sortCol[iter]=sortCol[iBig];
+                sortCol[iBig]=temp;
+            }
+            // Подгонка остальных цветов в один из 4-х основных
+            if(carry>4)
             {
-                cntCol[paperCnt]=0;
-                for (int i=0;i<carry;i++) {
-                    if(inkVal<cntCol[i]) inkCnt=i,inkVal=cntCol[i];
+                for (int i=4; i<carry; i++ ) {
+                    int invalidColor=sortCol[i];
+                    for(int a=0; a<4; a++) {
+                        diff[a]=invalidColor ^ sortCol[a];
+                        int xDiff=0;
+                        for(int bits=512; bits>0; bits/=2) {
+                            if (diff[a] & bits) xDiff++;
+                        }
+                        diff[a]=xDiff;
+                    }
+                    int cntDiff=0;
+                    int valDiff=diff[0];
+                    for (int b=1; b<4;b++) {
+                        if (diff[b]<valDiff) valDiff=diff[b], cntDiff=b;
+                    }
+                    for(int c=0; c<64; c++) {
+                        if (colBuf[c]==invalidColor) colBuf[c]=sortCol[cntDiff];
+                    }
                 }
             }
+            //
+            
+            int gigaColor=[self calculateGiga_colorMetaTable:tab_bB color1:colBuf[0] color2:colBuf[1] color3:colBuf[2] color4:colBuf[3] amount:carry];
+            
+            int p0p1=sortCol[(gigaColor>>16) & 3];
+            int p0i1=sortCol[(gigaColor>>18) & 3];
+            int i0p1=sortCol[(gigaColor>>20) & 3];
+            int i0i1=sortCol[(gigaColor>>22) & 3];
+           
             
             //          set color in char
-            byteData[atr]=((64 & sortCol[paperCnt]) + ((sortCol[paperCnt]&7)<<3)) | sortCol[inkCnt];
+            byteData[atr1]=gigaColor & 127;
+            byteData[atr2]=(gigaColor>>8) & 127;
+
             //            set pixels
             for(int yy=0;yy<8;yy++) {
-                int byte_l=0;
+                int byte_0=0;
+                int byte_1=0;
                 for (int xx=0;xx<8;xx++) {
-                    if(colBuf[yy*8+xx]==sortCol[inkCnt]) byte_l=byte_l*2+1;
-                    else byte_l*=2;
+                    if(colBuf[yy*8+xx]==p0p1) byte_0 *=2 , byte_1 *=2;
+                    if(colBuf[yy*8+xx]==p0i1) byte_0 *=2 , byte_1=byte_1 * 2 +1;
+                    if(colBuf[yy*8+xx]==i0p1) byte_0=byte_0 * 2 + 1 , byte_1 *=2;
+                    if(colBuf[yy*8+xx]==i0i1) byte_0=byte_0 * 2 + 1 , byte_1=byte_1 * 2 + 1;
+//                    else byte_0 *=2 , byte_1 *=2;
                 }
-                byteData[pixs+yy*256]=byte_l;
+                byteData[pixs1+yy]=byte_0;
+                byteData[pixs2+yy]=byte_1;
+
             }
         }
-
     }
     
 
@@ -1296,14 +1337,14 @@
 }
 
 
--(void)reverse:(Byte*)byteData withCharN:(int)ch charMode:(int)chrMode {
-    int pixs=7 + ch * chrMode;
+-(void)reverse:(Byte*)byteData withCharN:(NSUInteger)ch charMode:(NSUInteger)chrMode {
+    NSUInteger pixs=7 + ch * chrMode;
     int col=byteData[pixs+ chrMode-1];
     byteData[pixs + chrMode-1]=(col&64)+((col&7)<<3)+((col>>3)&7);
     for(int y=0;y<8;y++) byteData[pixs+y]^=255;
 }
 
--(BOOL)compare:(Byte*)byteData Old:(int)old New:(int)new charMode:(int)chrMode {
+-(BOOL)compare:(Byte*)byteData Old:(NSUInteger)old New:(NSUInteger)new charMode:(NSUInteger)chrMode {
     
     int atrOld=byteData[7+ old * chrMode + chrMode-1];
     int atrNew=byteData[7+ new * chrMode + chrMode-1];
@@ -1317,18 +1358,18 @@
     return false;
 }
 
--(BOOL)compareHorizontal:(Byte*)byteData Old:(int)old New:(int)new charMode:(int)chrMode {
+-(BOOL)compareHorizontal:(Byte*)byteData Old:(NSUInteger)old New:(NSUInteger)new charMode:(NSUInteger)chrMode {
     
-    int atrOld=byteData[7+ old * chrMode + chrMode-1];
-    int atrNew=byteData[7+ new * chrMode + chrMode-1];
-    int ink1=atrOld&7;
-    int paper1=(atrOld>>3) & 7;
-    int ink2=atrNew&7;
-    int paper2=(atrNew>>3) & 7;
+    NSUInteger atrOld=byteData[7+ old * chrMode + chrMode-1];
+    NSUInteger atrNew=byteData[7+ new * chrMode + chrMode-1];
+    NSUInteger ink1=atrOld&7;
+    NSUInteger paper1=(atrOld>>3) & 7;
+    NSUInteger ink2=atrNew&7;
+    NSUInteger paper2=(atrNew>>3) & 7;
     
-    int contrast=0;
-    int charLeft=7+ old * chrMode;
-    int charRight=7+ new * chrMode;
+    NSUInteger contrast=0;
+    NSUInteger charLeft=7+ old * chrMode;
+    NSUInteger charRight=7+ new * chrMode;
     
     for(int i=0;i<8;i++) {
         int cL=byteData[charLeft+i] & 1;
@@ -1362,5 +1403,57 @@
     if (col < 0xdb) return 3;
     if (col < 0xf3) return 4;
     return 5;
+}
+
+-(int)calculateGiga_colorMetaTable:(int*)tab_bB color1:(int)c1 color2:(int)c2 color3:(int)c3 color4:(int)c4 amount:(int)amount {
+    int mt[4]={c1,c2,c3,c4};
+    
+//   sort colors for rectangle view;
+    
+//    for (int i=0; i<6; i++) {
+//        for (int a=0; a<3;a++) {
+//            if(mt[a+1]<mt[a]) {
+//                int temp=mt[a+1];
+//                mt[a+1]=mt[a];
+//                mt[a]=temp;
+//            }
+//        }
+//    }
+    
+//
+    if (amount==1) {
+//        mt[1]=mt[3] & 15;
+//        mt[2]=mt[3] >> 4;
+        int a=[self get2colfrom1:c1];
+        int b= (a & 240) << 7;
+        b+=((a & 8) << 3)+ ((a & 7) << 3);
+        b|=0b01010100 << 16;
+        return  b;
+    }
+    if (amount==2) {
+        int a=[self get2colfrom2:c1 :c2];
+        int b= (a & 240) << 7;
+        b+=((a & 8) << 3)+ ((a & 7) << 3);
+        b|=0b01010100 << 16;
+        return  b;
+        
+    }
+    return 0;
+}
+
+-(int) get2colfrom1:(int)col1 {
+    int c1=col1 & 15;
+    c1=(c1>>1) + ((c1 & 1) << 3);
+    int c2=col1 >> 4;
+    c2=(c2>>1) + ((c2 & 1) << 3);
+    return (c1<<4) + c2;
+}
+
+-(int) get2colfrom2:(int)col1 :(int)col2 {
+    int c1=col1 & 15;
+    c1=(c1>>1) + ((c1 & 1) << 3);
+    int c2=col1 >> 4;
+    c2=(c2>>1) + ((c2 & 1) << 3);
+    return (c1<<4) + c2;
 }
 @end
