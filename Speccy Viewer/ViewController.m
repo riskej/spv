@@ -809,24 +809,32 @@
     
     if (image01 != nil) {
         
-        CGSize newSize = CGSizeMake(512, 384);
-        UIGraphicsBeginImageContext( newSize );
-        
-        [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-        [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
-        
-        UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
-        UIGraphicsEndImageContext();
+//        CGSize newSize = CGSizeMake(512, 384);
+//        UIGraphicsBeginImageContext( newSize );
+//        
+//        [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+//        [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+//        
+//        UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+//        UIGraphicsEndImageContext();
     
-    
-    if (!shareScoresController)
-    {
-        UIImage * shareImage = noflicImage;
-        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], shareImage, currentData, nil];
+        UIImage *noflicImageData;
         
+        if (!is6912Image) {
+            noflicImageData = imageForNoflicDemonstration01;
+        }
+        
+        else {
+            noflicImageData = image01;
+        }
+
+        NSArray * shareItems = [NSArray arrayWithObjects: [NSString stringWithFormat: @"Hey! Take a look at this great picrure!"], noflicImageData, nil];
+        
+//        if (!shareScoresController)
+//        {
         shareScoresController = [[UIActivityViewController alloc] initWithActivityItems:shareItems applicationActivities:nil];
         shareScoresController.excludedActivityTypes = [NSArray arrayWithObjects: UIActivityTypePrint, UIActivityTypeCopyToPasteboard, UIActivityTypeAssignToContact, nil];
-    }
+//        }
     
     [self presentViewController: shareScoresController animated:YES completion:nil];
 
