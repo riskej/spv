@@ -289,8 +289,11 @@
     [imageToConvert openZX_chr$:newData];
     image01 = imageToConvert.FinallyProcessedImage;
     
-    inputScreenHeight = image01.size.height;
-    inputScreenWidth = image01.size.width;
+    inputScreenHeight = image01.size.height/2;
+    inputScreenWidth = image01.size.width/2;
+    
+    NSLog(@"input wide width: %i", (int)inputScreenWidth);
+    NSLog(@"input wide height: %i", (int)inputScreenHeight);
     
     isNoflicMode = NO;
     isFlashImage = NO;
@@ -711,10 +714,10 @@
             
             [self didPressLink];
             
-            if (currentData != nil) {
+            if (newData != nil) {
                 
-                NSData *noflicImageData = currentData;
-                NSUInteger imageSize = [currentData length];
+                NSData *noflicImageData = newData;
+                NSUInteger imageSize = [newData length];
                 
                 if (imageSize == 6912) {
                     
@@ -725,6 +728,18 @@
                 
                 NSString *destDir = @"/SpeccyViewer/";
                 [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+                    
+                }
+                
+                else if ((inputScreenWidth > 256) || (inputScreenHeight > 192)) {
+                    
+                    NSString *filename = @"Picture.ch$";
+                    NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+                    NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+                    [noflicImageData writeToFile:localPath atomically:YES];
+                    
+                    NSString *destDir = @"/SpeccyViewer/";
+                    [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
                     
                 }
                 
