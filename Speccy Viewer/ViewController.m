@@ -640,7 +640,7 @@
     
     CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
     i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
-    i02.title = @"Save *.scr \nto Dropbox";
+    i02.title = @"Save source \nto Dropbox";
     
     CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
     i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
@@ -686,7 +686,7 @@
         
             if (image01 != nil) {
 
-            CGSize newSize = CGSizeMake(512, 384);
+            CGSize newSize = CGSizeMake(inputScreenWidth*2, inputScreenHeight*2);
             UIGraphicsBeginImageContext( newSize );
         
             [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
@@ -710,7 +710,7 @@
         }
         }
         
-        else if ([item.title isEqual: @"Save *.scr \nto Dropbox"]) {
+        else if ([item.title isEqual: @"Save source \nto Dropbox"]) {
             
             [self didPressLink];
             
