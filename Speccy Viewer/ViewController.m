@@ -28,6 +28,9 @@
 @implementation ViewController
 
 {
+    UILabel *noDataMessage;
+    UILabel *noDataMessage2;
+    UILabel *noDataMessage3;
     NSData *newData;
     int kRetina;
     BOOL isLoadedFilePNG;
@@ -375,16 +378,16 @@
         
         self.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.79 alpha:1];
         
-        UILabel *noDataMessage;
+
         noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
         noDataMessage.textColor = [UIColor whiteColor];
         noDataMessage.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
         noDataMessage.textAlignment = NSTextAlignmentCenter;
         noDataMessage.numberOfLines = 0;
-        noDataMessage.text = [NSString stringWithFormat:@"Please use 'Open in...' menu in order to open an ZX Spectrum image."];
+        noDataMessage.text = [NSString stringWithFormat:@"Please use 'Open in...' menu \nin order to open an ZX Spectrum image."];
         [self.view addSubview:noDataMessage];
         
-        UILabel *noDataMessage2;
+
         noDataMessage2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height+80)];
         noDataMessage2.textColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8];
         noDataMessage2.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
@@ -454,14 +457,13 @@
         
         self.view.backgroundColor = [UIColor colorWithRed:0.79 green:0 blue:0.79 alpha:1];
         
-        UILabel *noDataMessage;
-        noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        noDataMessage.textColor = [UIColor whiteColor];
-        noDataMessage.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
-        noDataMessage.textAlignment = NSTextAlignmentCenter;
-        noDataMessage.numberOfLines = 0;
-        noDataMessage.text = [NSString stringWithFormat:@"Seems like the image you're loading \nis not a valid ZX Spectrum image"];
-        [self.view addSubview:noDataMessage];
+        noDataMessage3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        noDataMessage3.textColor = [UIColor whiteColor];
+        noDataMessage3.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
+        noDataMessage3.textAlignment = NSTextAlignmentCenter;
+        noDataMessage3.numberOfLines = 0;
+        noDataMessage3.text = [NSString stringWithFormat:@"Seems like the image you're loading \nis not a valid ZX Spectrum image"];
+        [self.view addSubview:noDataMessage3];
     }
     
     //    [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -601,6 +603,7 @@
 -(void) showFlickeringPicture {
     
     flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
+
     flickerImages.animationImages = [NSArray arrayWithObjects:
                                      image01, image02,
                                      nil];
@@ -925,6 +928,17 @@ loadMetadataFailedWithError:(NSError *)error {
      }];
 }
 
+
+- (void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
+    
+    noDataMessage.center = CGPointMake(size.width/2, size.height/2);
+    noDataMessage2.center = CGPointMake(size.width/2, size.height/2+40);
+    noDataMessage3.center = CGPointMake(size.width/2, size.height/2);
+    flickerImages.center = CGPointMake(size.width/2, size.height/2);
+    screenToShow.center = CGPointMake(size.width/2, size.height/2);
+    screenToShow2.center = CGPointMake(size.width/2, size.height/2);
+
+}
 
 
 @end
