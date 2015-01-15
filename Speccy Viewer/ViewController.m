@@ -56,9 +56,9 @@
     UIImageView *screenToShow;
     UIImageView *screenToShow2;
     UIImageView *borderToShow;
-    UIImageView *borderToShow2;
+//    UIImageView *borderToShow2;
     UIColor *borderColorScreen01;
-    UIColor *borderColorScreen02;
+//    UIColor *borderColorScreen02;
     int border01, border02;
     UIView *canvas;
     CGFloat _lastScale;
@@ -194,17 +194,17 @@
     [self getBorderColors];
     
     if (incomingFileSize != 13824) {
-        borderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        borderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 2300, 2300)];
         borderToShow.backgroundColor = borderColorScreen01;
         borderToShow.alpha = 1;
-        borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        borderToShow2.backgroundColor = borderColorScreen02;
-        borderToShow2.alpha = 0.5;
+//        borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+//        borderToShow2.backgroundColor = borderColorScreen02;
+//        borderToShow2.alpha = 0.5;
     
         [self.view addSubview:borderToShow];
         [self.view insertSubview:borderToShow belowSubview:mainMenu];
-        [self.view addSubview:borderToShow2];
-        [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
+//        [self.view addSubview:borderToShow2];
+//        [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
     }
     
     image01 = convertedImage.FinallyProcessedImage;
@@ -241,14 +241,14 @@
     borderToShow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     borderToShow.backgroundColor = borderColorScreen01;
     borderToShow.alpha = 1;
-    borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    borderToShow2.backgroundColor = borderColorScreen02;
-    borderToShow2.alpha = 0.5;
+//    borderToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+//    borderToShow2.backgroundColor = borderColorScreen02;
+//    borderToShow2.alpha = 0.5;
     
     [self.view addSubview:borderToShow];
     [self.view insertSubview:borderToShow belowSubview:mainMenu];
-    [self.view addSubview:borderToShow2];
-    [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
+//    [self.view addSubview:borderToShow2];
+//    [self.view insertSubview:borderToShow2 belowSubview:mainMenu];
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
@@ -498,17 +498,18 @@
 
 -(void)getBorderColors {
     
-    float colRed = border01 & 2 ? 0.79 : 0;
-    float colGreen = border01 & 4 ? 0.79 : 0;
-    float colBlue = border01 & 1 ? 0.79 : 0;
+    float border[3]={0,0.4609375,0.8039};
+    float colRed = border[((border01 & 2) + (border02 & 2)) >>1];
+    float colGreen = border[((border01 & 4) + (border02 & 4)) >>2];
+    float colBlue = border[(border01 & 1) + (border02 & 1)];
     borderColorScreen01 = [UIColor colorWithRed:colRed green:colGreen blue:colBlue alpha:1];
     
     //    NSLog(@"red: %f, green: %f, blue: %f", colRed, colGreen, colBlue);
     
-    float colRed2 = border02 & 2 ? 0.79 : 0;
-    float colGreen2 = border02 & 4 ? 0.79 : 0;
-    float colBlue2 = border02 & 1 ? 0.79 : 0;
-    borderColorScreen02 = [UIColor colorWithRed:colRed2 green:colGreen2 blue:colBlue2 alpha:1];
+//    float colRed2 = border02 & 2 ? 0.79 : 0;
+//    float colGreen2 = border02 & 4 ? 0.79 : 0;
+//    float colBlue2 = border02 & 1 ? 0.79 : 0;
+//    borderColorScreen02 = [UIColor colorWithRed:colRed2 green:colGreen2 blue:colBlue2 alpha:1];
     
     //    NSLog(@"red2: %f, green2: %f, blue2: %f", colRed2, colGreen2, colBlue2);
     
@@ -781,7 +782,7 @@
     mainMenu.frame = CGRectMake(0, 0, 80.0, 60.0);
     
     [self.view addSubview:mainMenu];
-    [self.view insertSubview:mainMenu aboveSubview:borderToShow2];
+    [self.view insertSubview:mainMenu aboveSubview:borderToShow];
     
 }
 
@@ -976,6 +977,8 @@ loadMetadataFailedWithError:(NSError *)error {
     flickerImages.center = CGPointMake(size.width/2, size.height/2);
     screenToShow.center = CGPointMake(size.width/2, size.height/2);
     screenToShow2.center = CGPointMake(size.width/2, size.height/2);
+//    borderToShow.center = CGPointMake(size.width/2, size.height/2);
+//    borderToShow.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
 
 }
 
