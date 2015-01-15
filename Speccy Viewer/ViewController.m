@@ -14,6 +14,11 @@
 #import <DBChooser/DBChooser.h>
 #import <DBChooser/DBChooserResult.h>
 
+#define is_iphone (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define is_iphone4 (is_iphone && [[UIScreen mainScreen] bounds].size.height == 480.0f)
+#define is_iphone5 (is_iphone && [[UIScreen mainScreen] bounds].size.height == 568.0f)
+#define is_ipad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+
 @interface ViewController () <CNPGridMenuDelegate, DBRestClientDelegate>
 @property (nonatomic, strong) DBRestClient *restClient;
 @property (nonatomic, strong) CNPGridMenu *gridMenu;
