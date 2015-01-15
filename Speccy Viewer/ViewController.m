@@ -686,20 +686,29 @@
         
             if (image01 != nil) {
 
-            CGSize newSize = CGSizeMake(inputScreenWidth*2, inputScreenHeight*2);
-            UIGraphicsBeginImageContext( newSize );
-        
-            [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-                
-                if (!isLoadedFilePNG) {
-                    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
-                }
-        
-            UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
+//            CGSize newSize = CGSizeMake(inputScreenWidth*2, inputScreenHeight*2);
+//            UIGraphicsBeginImageContext( newSize );
+//        
+//            [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+//                
+//                if (!isLoadedFilePNG) {
+//                    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+//                }
+//        
+//            UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+//            UIGraphicsEndImageContext();
             
-            NSData *noflicImageData = UIImagePNGRepresentation(noflicImage);
-        
+//            NSData *noflicImageData = UIImagePNGRepresentation(noflicImage);
+                NSData *noflicImageData;
+                
+                if (!is6912Image) {
+                    noflicImageData = UIImagePNGRepresentation(imageForNoflicDemonstration01);
+                }
+                
+                else {
+                    noflicImageData = UIImagePNGRepresentation(image01);
+                }
+                
             NSString *filename = @"Picture.png";
             NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
             NSString *localPath = [localDir stringByAppendingPathComponent:filename];
