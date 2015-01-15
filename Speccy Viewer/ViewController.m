@@ -107,11 +107,11 @@
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     screenToShow.image = convertedImage.FinallyProcessedImage;
-    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow.transform = CGAffineTransformMakeScale(1, 1);
 
     screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     screenToShow2.image = convertedImage.FinallyProcessedImage;
-    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
@@ -160,11 +160,11 @@
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
     screenToShow.image = convertedImage.FinallyProcessedImage;
-    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow.transform = CGAffineTransformMakeScale(1, 1);
     
     screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
     screenToShow2.image = convertedImage.FinallyProcessedImage2;
-    screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
@@ -566,7 +566,7 @@
         screenToShow.image = image01;
     }
     screenToShow.alpha = 1.0;
-    screenToShow.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    screenToShow.transform = CGAffineTransformMakeScale(1, 1);
     
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
@@ -587,7 +587,7 @@
         }
         
         screenToShow2.alpha = 0.5;
-        screenToShow2.transform = CGAffineTransformMakeScale(1.3, 1.3);
+        screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
         
         [self.view addSubview:screenToShow2];
         [self.view insertSubview:screenToShow2 belowSubview:mainMenu];
@@ -611,7 +611,7 @@
         flickerImages.animationDuration = 0.83;
     
     flickerImages.animationRepeatCount = 0;
-    flickerImages.transform = CGAffineTransformMakeScale(1.3, 1.3);
+    flickerImages.transform = CGAffineTransformMakeScale(1, 1);
     [flickerImages startAnimating];
     
     [self.view addSubview:flickerImages];
