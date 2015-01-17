@@ -155,7 +155,7 @@
     RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     convertedImage.mode_scr=mode_scr;
     convertedImage.kRetina = kRetina;
-    [convertedImage openZX_chr$:currentData];
+    [convertedImage openZX_chr:currentData];
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
@@ -286,7 +286,7 @@
 //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.mode_scr=2;
     imageToConvert.kRetina = kRetina;
-    [imageToConvert openZX_chr$:newData];
+    [imageToConvert openZX_chr:newData];
     image01 = imageToConvert.FinallyProcessedImage;
     
     inputScreenHeight = image01.size.height/2;
@@ -599,7 +599,7 @@
             is6912Image = NO;
         }
         
-        screenToShow2.alpha = 0.5;
+        screenToShow2.alpha = 1.0;
         screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
         
         [self.view addSubview:screenToShow2];
@@ -741,7 +741,7 @@
                     
                 }
                 
-                else if ((inputScreenWidth > 256) || (inputScreenHeight > 192)) {
+                else if ((inputScreenWidth > 240) || (inputScreenHeight > 160)) { /* !!!!!!!!!!!!!!*/
                     
                     NSString *filename = @"Picture.ch$";
                     NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
