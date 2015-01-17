@@ -230,6 +230,22 @@
     int xMax=byteData[4];
     int yMax=byteData[5];
     int mode=byteData[6];
+    int mode05=9;
+    int modeY=8;
+    if(mode>17) mode05=mode/2;
+    switch (mode) {
+        case 18:
+            modeY=8;
+            break;
+        case 20:
+            modeY=4;
+            break;
+        case 24:
+            modeY=2;
+            break;
+        default:
+            break;
+    }
     
     NSUInteger inputWidth = xMax * 8 * kRetina;
     NSUInteger inputHeight =yMax * 8 * kRetina;
@@ -249,7 +265,7 @@
     NSLog(@"Width: %i", xMax);
     NSLog(@"Height: %i", yMax);
     
-    
+    UInt32 iipp[4];
     for (int ychar=0; ychar<yMax; ychar++) {
         
         for (int xchar=0; xchar<xMax; xchar++) {
@@ -300,59 +316,37 @@
                 }
             }
             
-            if (mode==18) {
+            if (mode>17) {
                 for(int ypix=0;ypix<8;ypix++) {
                     NSUInteger adr = ((ychar * 8 + ypix) * kRetina) * inputWidth  + (xchar*8*kRetina);
-                    NSUInteger byte1 = byteData[7+nchar*18+ypix];
-                    NSUInteger atr1 = byteData[7+nchar*18+8];
+                    NSUInteger byte1 = byteData[7 + nchar*mode + ypix];
+                    NSUInteger atr1 = byteData[7 + nchar*mode + 8 + ypix/modeY];
                     NSUInteger flash1 = atr1 & 128;
                     NSUInteger bright1 = atr1 & 64;
     
-                    NSUInteger byte2 = byteData[7+nchar*18+9+ypix];
-                    NSUInteger atr2 = byteData[7+nchar*18+17];
+                    NSUInteger byte2 = byteData[7 + nchar*mode + mode05 + ypix];
+                    NSUInteger atr2 = byteData[7 + nchar*mode + mode05+8 + ypix/modeY];
                     NSUInteger flash2 = atr2 & 128;
                     NSUInteger bright2 = atr2 & 64;
                     
-                    // i - ink , p - paper
-                    UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
-                    UInt32 i1p2=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
-                    UInt32 p1i2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :atr2];
-                    UInt32 p1p2=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :(bright2|((atr2>>3)&7))];
+                    // i - ink , p - paper     // p0p1 - 1   i0i1 - 2  i0p1 - 3   p0i1 - 4
+                    iipp[3]=[self calculateColorForGiga:atr1 :atr2];
+                    iipp[1]=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
+                    iipp[2]=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :atr2];
+                    iipp[0]=[self calculateColorForGiga:(bright1|((atr1>>3)&7)) :(bright2|((atr2>>3)&7))];
                     
                     NSUInteger xpix=0;
                     for (int xBit=128; xBit>0; xBit/=2,xpix++) {
-                        UInt32 val1 = 0;
-                        UInt32 val2 = 0;
-                        NSUInteger px=byte1 & xBit ? 1 : 0;
-                        px+=byte2 & xBit ? 2 : 0;
-                        switch(px){
-                            case 0: val1=p1p2;
-                                break;
-                            case 1: val1=i1p2;
-                                break;
-                            case 2: val1=p1i2;
-                                break;
-                            case 3: val1=i1i2;
-                                break;
-                        }
-                        px=px ^ (flash1>>7) ^ (flash2>>6);
-                        switch(px){
-                            case 0: val2=p1p2;
-                                break;
-                            case 1: val2=i1p2;
-                                break;
-                            case 2: val2=p1i2;
-                                break;
-                            case 3: val2=i1i2;
-                                break;
-                        }
+                        NSUInteger val1=byte1 & xBit ? 1 : 0;
+                        val1+=byte2 & xBit ? 2 : 0;
+                        NSUInteger val2=val1 ^ (flash1>>7) ^ (flash2>>6);
                         for(int yRetina=0;yRetina<kRetina;yRetina++)
                         {
                             UInt32 * inputPixel_noFlash = inputPixels + adr + yRetina * inputWidth + xpix * kRetina;
                             UInt32 * inputPixel_invertedFlash = inputPixels2 + + adr + yRetina * inputWidth + xpix * kRetina;
                             for(int xRetina=0;xRetina<kRetina;xRetina++) {
-                                *inputPixel_noFlash++ = val1;
-                                *inputPixel_invertedFlash++ = val2;
+                                *inputPixel_noFlash++ =iipp[val1];
+                                *inputPixel_invertedFlash++ = iipp[val2];
                             }
                         }
                     }
@@ -1069,7 +1063,9 @@
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
     
     
-    NSUInteger chrMode=18;
+    NSUInteger chrMode=24;
+    NSUInteger mode05=chrMode/2;
+    
     int atrOffSet=8;
     int chSize=8;
     
@@ -1201,19 +1197,29 @@
     else {
         
         //   -===- GIGA & multiGIGA mode -===-
+        NSUInteger sizeBufs=64;
+        NSUInteger yInChr=8;
+        NSUInteger mChar=1;
+        switch (chrMode) {
+            case 20:
+                sizeBufs=32;
+                yInChr=4;
+                mChar=2;
+                break;
+            case 24:
+                sizeBufs=16;
+                yInChr=2;
+                mChar=4;
+                break;
+            default:
+                break;
+        }
         
         // Prepape color tables
         
          NSLog(@"Convert PNG > GIGA Begin! %i", 0);
-        int * tab_bB = (int *) calloc(512, sizeof(int));
+
         int * iipp = (int *) calloc(65536, sizeof(int));
-        
-        for(int colY=0; colY<16; colY++) {
-            for(int colX=0; colX<16; colX++) {
-                int rgb=[self calculateColorForGiga_2:colY :colX];
-                tab_bB[rgb]=colY * 16 + colX;
-            }
-        }
         
         for(int atr1=0, initadr=0; atr1<128; atr1++) {
             for (int atr2=0; atr2<128; atr2++) {
@@ -1228,110 +1234,129 @@
         
         for (int chars=0; chars<zxWidth*zxHeight; chars++) {
             NSUInteger pixs1=7 + chars * chrMode;
-            NSUInteger pixs2=pixs1 + chrMode/2;
-            NSUInteger atr1=pixs1+8;
-            NSUInteger atr2=pixs2+8;
-            
-            NSUInteger png=((int)(chars /zxWidth)) * width * chSize * k + (chars % zxWidth) * 8 * k;
-            int ix=0;
-            for (int ypix=0; ypix<8;ypix++) {
+            NSUInteger pixs2=pixs1 + mode05;
+            for(int iterY=0;iterY<mChar;iterY++) {
+                NSUInteger yy_com=yInChr*iterY;
+               
+                NSUInteger atr1=pixs1+8+iterY;
+                NSUInteger atr2=pixs2+8+iterY;
                 
-                for (int xpix=0; xpix<8;xpix++) {
-                    UInt32 pix=pixels[png+ypix*(int)(width*k)+(int)(xpix*k)];
+                NSUInteger png=((int)(chars /zxWidth)) * width * chSize * k + (chars % zxWidth) * 8 * k;
+                int ix=0;
+                for (int ypix=0; ypix<yInChr;ypix++) {
                     
-                    colR=[self calculateBright:pix & 255];
-                    colG=[self calculateBright:(pix>>8) & 255];
-                    colB=[self calculateBright:(pix>>16) & 255];
-                    col= (colB<<6) | (colG<<3) | colR;
-                    colBuf[ix]=col;
-                    ix++;
-                }
-            }
-            //        Sort colors & counting;
-            NSUInteger carry=1;
-            
-            for(int i=0;i<64;sortCol[i]=0,cntCol[i++]=0);
-            sortCol[0]=colBuf[0];
-            
-            for (int i=0;i<64;i++) {
-                BOOL flag=false;
-                for (int curCar=0;curCar<carry;curCar++) {
-                    if(colBuf[i]==sortCol[curCar]) {
-                        cntCol[curCar]++;
-                        flag=true;
-                        break;
+                    for (int xpix=0; xpix<8;xpix++) {
+                        UInt32 pix=pixels[png+(iterY*yInChr+ypix)*(int)(width*k)+(int)(xpix*k)];
+                        
+                        colR=[self calculateBright:pix & 255];
+                        colG=[self calculateBright:(pix>>8) & 255];
+                        colB=[self calculateBright:(pix>>16) & 255];
+                        col= (colB<<6) | (colG<<3) | colR;
+                        colBuf[ix]=col;
+                        ix++;
                     }
                 }
-                if(!flag) sortCol[carry]=colBuf[i], cntCol[carry++]++;
-            }
-                //          find 4 most meeted colors
-            for (int iter=0; iter<4; iter++) {
-                int big=cntCol[iter];
-                int iBig=iter;
-                for (int i=iter; i<carry; i++) {
-                    if(cntCol[i]>big) iBig=i, big=cntCol[i];
-                }
-                NSUInteger temp=cntCol[iter];
-                cntCol[iter]=cntCol[iBig];
-                cntCol[iBig]=temp;
-                temp=sortCol[iter];
-                sortCol[iter]=sortCol[iBig];
-                sortCol[iBig]=temp;
-            }
-            // Подгонка остальных цветов в один из 4-х основных
-            if(carry>4)
-            {
-                for (int i=4; i<carry; i++ ) {
-                    NSUInteger invalidColor=sortCol[i];
-                    for(int a=0; a<4; a++) {
-                        diff[a]=invalidColor ^ sortCol[a];
-                        int xDiff=0;
-                        for(int bits=512; bits>0; bits/=2) {
-                            if (diff[a] & bits) xDiff++;
+                //        Sort colors & counting;
+                NSUInteger carry=1;
+                
+                for(int i=0;i<sizeBufs;sortCol[i]=0,cntCol[i++]=0);
+                sortCol[0]=colBuf[0];
+                
+                for(int i=0;i<sizeBufs;i++) {
+                    BOOL flag=false;
+                    for (int curCar=0;curCar<carry;curCar++) {
+                        if(colBuf[i]==sortCol[curCar]) {
+                            cntCol[curCar]++;
+                            flag=true;
+                            break;
                         }
-                        diff[a]=xDiff;
                     }
-                    NSUInteger cntDiff=0;
-                    NSUInteger valDiff=diff[0];
-                    for (int b=1; b<4;b++) {
-                        if (diff[b]<valDiff) valDiff=diff[b], cntDiff=b;
+                    if(!flag) sortCol[carry]=colBuf[i], cntCol[carry++]++;
+                }
+                //          find 4 most meeted colors
+                for (int iter=0; iter<4; iter++) {
+                    int big=cntCol[iter];
+                    int iBig=iter;
+                    for (int i=iter; i<carry; i++) {
+                        if(cntCol[i]>big) iBig=i, big=cntCol[i];
                     }
-                    for(int c=0; c<64; c++) {
-                        if (colBuf[c]==invalidColor) colBuf[c]=sortCol[cntDiff];
+                    NSUInteger temp=cntCol[iter];
+                    cntCol[iter]=cntCol[iBig];
+                    cntCol[iBig]=temp;
+                    temp=sortCol[iter];
+                    sortCol[iter]=sortCol[iBig];
+                    sortCol[iBig]=temp;
+                }
+                // Подгонка остальных цветов в один из 4-х основных
+                if(carry>4)
+                {
+                    for (int i=4; i<carry; i++ ) {
+                        NSUInteger invalidColor=sortCol[i];
+                        for(int a=0; a<4; a++) {
+                            diff[a]=invalidColor ^ sortCol[a];
+                            int xDiff=0;
+                            for(int bits=512; bits>0; bits/=2) {
+                                if (diff[a] & bits) xDiff++;
+                            }
+                            diff[a]=xDiff;
+                        }
+                        NSUInteger cntDiff=0;
+                        NSUInteger valDiff=diff[0];
+                        for (int b=1; b<4;b++) {
+                            if (diff[b]<valDiff) valDiff=diff[b], cntDiff=b;
+                        }
+                        for(int c=0; c<64; c++) {
+                            if (colBuf[c]==invalidColor) colBuf[c]=sortCol[cntDiff];
+                        }
                     }
                 }
-            }
-            //
-            NSUInteger gigaColor=[self calculateGiga_colorMetaTable:iipp colors:sortCol amount:carry];
-
-            NSUInteger p0p1=sortCol[(gigaColor>>16) & 3]; // p0p1 - 1   i0i1 - 2  i0p1 - 3   p0i1 - 4
-            NSUInteger i0i1=sortCol[(gigaColor>>18) & 3];
-            NSUInteger i0p1=sortCol[(gigaColor>>20) & 3];
-            NSUInteger p0i1=sortCol[(gigaColor>>22) & 3];
-            
-            //          set color in char
-            byteData[atr1]=gigaColor & 127;
-            byteData[atr2]=(gigaColor>>8) & 127;
-            
-            //            set pixels
-            for(int yy=0;yy<8;yy++) {
-                Byte byte_0=0;
-                Byte byte_1=0;
-                for (int xx=0,xBit=128; xx<8; xx++,xBit/=2) {
-                    if(colBuf[yy*8+xx]==p0p1) continue;
-                    if(colBuf[yy*8+xx]==i0i1) {byte_0+=xBit; byte_1+=xBit; continue;}
-                    if(colBuf[yy*8+xx]==i0p1) {byte_0+=xBit; continue;}
-                    if(colBuf[yy*8+xx]==p0i1) {byte_1+=xBit; continue;}
+                //
+                NSUInteger gigaColor=[self calculateGiga_colorMetaTable:iipp colors:sortCol amount:carry];
+                
+                NSUInteger p0p1=sortCol[(gigaColor>>16) & 3]; // p0p1 - 1   i0i1 - 2  i0p1 - 3   p0i1 - 4
+                NSUInteger i0i1=sortCol[(gigaColor>>18) & 3];
+                NSUInteger i0p1=sortCol[(gigaColor>>20) & 3];
+                NSUInteger p0i1=sortCol[(gigaColor>>22) & 3];
+                
+                //          set color in char
+                byteData[atr1]=gigaColor & 127;
+                byteData[atr2]=(gigaColor>>8) & 127;
+                
+                //            set pixels
+                for(int yy=0;yy<yInChr;yy++) {
+                    Byte byte_0=0;
+                    Byte byte_1=0;
+                    for (int xx=0,xBit=128; xx<8; xx++,xBit/=2) {
+                        if(colBuf[yy*8+xx]==p0p1) continue;
+                        if(colBuf[yy*8+xx]==i0i1) {byte_0+=xBit; byte_1+=xBit; continue;}
+                        if(colBuf[yy*8+xx]==i0p1) {byte_0+=xBit; continue;}
+                        if(colBuf[yy*8+xx]==p0i1) {byte_1+=xBit; continue;}
+                    }
+                    byteData[pixs1+yy_com+yy]=byte_0;
+                    byteData[pixs2+yy_com+yy]=byte_1;
                 }
-                byteData[pixs1+yy]=byte_0;
-                byteData[pixs2+yy]=byte_1;
+                
             }
         }
-        free(tab_bB);
+        
         free(iipp);
         NSLog(@"Convert PNG > GIGA End! %i", 0);
     }
-
+    
+    if(zxWidth==32 && zxHeight==24) {
+        if(chrMode==9) {
+            [self convChr6912:byteData];
+            len=6912;
+        }
+        if(chrMode==18) {
+            [self convChr2Img:byteData];
+            len=6912*2;
+        }
+        if(chrMode==20) {
+            len=[self convChr2Mgx:byteData mode:chrMode];
+        }
+    }
+    
     // create new image based on new data
     convertedSpeccyScr01 = [NSData dataWithBytes:(const void *)byteData length:len];
     
@@ -1348,7 +1373,7 @@
     CGColorSpaceRelease(colorSpace);
 //    CGImageRelease(inputCGImage);
     CGContextRelease(context);
-    
+    return;
 }
 
 
@@ -1425,7 +1450,7 @@
     // p0p1 - 1   i0i1 - 2  i0p1 - 3   p0i1 - 4
     
     // 5721   4500   1682  800
-    int num=amount;
+    NSUInteger num=amount;
     if(amount > 3) num=4;
     int ipadr=0;
     for(int atr1=0; atr1<128; atr1++) {
@@ -1453,6 +1478,62 @@
     int c2=(col1 >> 4) & 15;
     c2=(c2>>1) + ((c2 & 1) << 3);
     return (c1<<4) + c2;
+}
+
+-(void) convChr6912:(Byte*)byteData {
+    Byte * newData=(Byte*)malloc(6912);
+    NSUInteger src=7;
+    for(int ch=0; ch<768; ch++) {
+        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger adratr=6144+ch;
+        for(int i=0; i<8; i++) {
+            newData[adrpix+i]=byteData[src++];
+        }
+        newData[adratr]=byteData[src++];
+    }
+    memcpy(newData, byteData, 6912);
+    free(newData);
+}
+-(void) convChr2Img:(Byte*)byteData {
+    Byte * newData=(Byte*)malloc(6912*2);
+    NSUInteger src=7;
+    for(int ch=0; ch<768; ch++) {
+        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger adratr=6144+ch;
+        for(int i=0; i<8; i++) {
+            newData[adrpix+i]=byteData[src++];
+        }
+        newData[adratr]=byteData[src++];
+        for(int i=0; i<8; i++) {
+            newData[6912+adrpix+i]=byteData[src++];
+        }
+        newData[6912+adratr]=byteData[src++];
+    }
+    memcpy(newData, byteData, 6912*2);
+    free(newData);
+}
+
+-(int) convChr2Mgx:(Byte*)byteData mode:(NSUInteger)mode{
+    int atrInCh=2;
+    if(mode==20) mode=4;
+    else mode=8, atrInCh=4;
+    Byte * newData=(Byte*)malloc(12288+768*mode);
+    for(int ch=0; ch<768; ch++) {
+        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger atradr=12288+ch*atrInCh;
+        NSUInteger src=7 + ch*mode;
+        for(int i=0; i<8; i++) {
+            newData[adrpix+i]=byteData[src+i];
+            newData[adrpix+6144+i]=byteData[src+i+mode/2];
+        }
+        for(int a=0; a<atrInCh; a++) {
+            newData[atradr+a]=byteData[src+8+a];
+            newData[atradr+a+768*mode]=byteData[src+8+a+mode/2];
+        }
+    }
+    memcpy(newData, byteData, 12288+768*mode);
+    free(newData);
+    return 12288+768*(int)mode;
 }
 
 @end;
