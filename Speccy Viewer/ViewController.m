@@ -288,9 +288,12 @@
     newData = imageToConvert.convertedSpeccyScr01;
     //
     //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-//    imageToConvert.mode_scr = modeToConvertFromPNG;
     imageToConvert.kRetina = kRetina;
-    [imageToConvert openZX_chr:newData];
+    int size=sizeof(newData);
+    if(size==6912) [imageToConvert openZX_scr6912:newData];
+    else if(size==13824 || size == 15616 || size==18688) [imageToConvert openZX_img_mgX_noflic:newData];
+    else [imageToConvert openZX_chr:newData];
+    
     image01 = imageToConvert.FinallyProcessedImage;
     
     inputScreenHeight = image01.size.height/2;

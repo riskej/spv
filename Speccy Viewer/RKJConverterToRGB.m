@@ -1488,7 +1488,7 @@
     Byte * newData=(Byte*)malloc(6912);
     NSUInteger src=7;
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger adrpix=(ch>>8)*2048 + ch;
         NSUInteger adratr=6144+ch;
         for(int i=0; i<8; i++) {
             newData[adrpix+i]=byteData[src++];
@@ -1504,7 +1504,7 @@
     Byte * newData=(Byte*)malloc(6912*2);
     NSUInteger src=7;
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger adrpix=(ch>>8)*2048 + ch;
         NSUInteger adratr=6144+ch;
         for(int i=0; i<8; i++) {
             newData[adrpix+i]=byteData[src++];
@@ -1520,35 +1520,38 @@
 }
 
 
--(int) convChr2Mgx:(Byte*)byteData mode:(NSUInteger)mode{
+-(int) convChr2Mgx:(Byte*)byteData mode:(NSUInteger)chMode{
     int atrInCh=2;
-    if(mode==20) mode=4;
+    int mode;
+    if(chMode==20) mode=4;
     else mode=8, atrInCh=4;
     Byte * newData=(Byte*)malloc(256+12288+768*mode);
     newData[0]='M'; // signature
     newData[1]='G';
     newData[2]='H';
     newData[3]=1; // version
-    newData[4]=mode > 21 ? 2 : 4;
+    newData[4]=chMode > 21 ? 2 : 4; // char size
     newData[5]=0; // border 1
     newData[6]=0; // border 2
     
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch&768)*2048 + ch;
+        NSUInteger adrpix=(ch>>8)*2048 + ch;
         NSUInteger atradr=12288+ch*atrInCh;
-        NSUInteger src=7 + ch*mode;
+        NSUInteger src=7 + ch*chMode;
         for(int i=0; i<8; i++) {
-            newData[adrpix+i]=byteData[src+i];
-            newData[adrpix+6144+i]=byteData[src+i+mode/2];
+            newData[256+adrpix+i]=byteData[src+i];
+            newData[256+adrpix+6144+i]=byteData[src+i+chMode/2];
         }
         for(int a=0; a<atrInCh; a++) {
-            newData[atradr+a]=byteData[src+8+a];
-            newData[atradr+a+768*mode]=byteData[src+8+a+mode/2];
+            int b=byteData[src+8+a];
+            newData[256+atradr+a]=b;
+            b=byteData[src+8+a+chMode/2];
+            newData[256+atradr+a+384*mode]=b;
         }
     }
     memcpy(newData, byteData, 256+12288+768*mode);
     free(newData);
-    return 256+12288+768*(int)mode;
+    return 256+12288+768*mode;
 }
 
 
