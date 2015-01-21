@@ -279,6 +279,7 @@
     RKJConverterToRGB *imageToConvert = [[RKJConverterToRGB alloc] init];
     
     UIImage *incomingImage = [UIImage imageWithData:currentData];
+    imageToConvert.mode_scr = modeToConvertFromPNG;
     [imageToConvert convertPNGtoSCR:incomingImage];
     image02 =  imageToConvert.FinallyProcessedImage2;
     //    image01 =  imageToConvert.FinallyProcessedImage2;
@@ -287,7 +288,7 @@
     newData = imageToConvert.convertedSpeccyScr01;
     //
     //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    imageToConvert.mode_scr = modeToConvertFromPNG;
+//    imageToConvert.mode_scr = modeToConvertFromPNG;
     imageToConvert.kRetina = kRetina;
     [imageToConvert openZX_chr:newData];
     image01 = imageToConvert.FinallyProcessedImage;

@@ -1062,7 +1062,7 @@
     // 4.
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
     
-    
+    NSLog(@"mode_scr=%i", mode_scr);
     NSUInteger chrMode=9;
     if(mode_scr==3) chrMode=18;
     if(mode_scr==5) chrMode=20;
@@ -1356,7 +1356,7 @@
             [self convChr2Img:byteData];
             len=6912*2;
         }
-        if(chrMode==20) {
+        if(chrMode==20 || chrMode==24) {
             len=[self convChr2Mgx:byteData mode:chrMode];
         }
     }
