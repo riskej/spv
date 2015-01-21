@@ -280,7 +280,7 @@
     
     UIImage *incomingImage = [UIImage imageWithData:currentData];
     imageToConvert.mode_scr = modeToConvertFromPNG;
-    [imageToConvert convertPNGtoSCR:incomingImage];
+    int size=[imageToConvert convertPNGtoSCR:incomingImage];
     image02 =  imageToConvert.FinallyProcessedImage2;
     //    image01 =  imageToConvert.FinallyProcessedImage2;
     
@@ -289,10 +289,11 @@
     //
     //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.kRetina = kRetina;
-    int size=sizeof(newData);
+    NSLog(@"Convert OK! %i", size);
     if(size==6912) [imageToConvert openZX_scr6912:newData];
     else if(size==13824 || size == 15616 || size==18688) [imageToConvert openZX_img_mgX_noflic:newData];
     else [imageToConvert openZX_chr:newData];
+
     
     image01 = imageToConvert.FinallyProcessedImage;
     
@@ -631,6 +632,10 @@
     
     else if (incomingFileSize == 18432) {
         [self convert6144_n_rgb:10];
+    }
+    
+    else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
+        [self convertChr$:9 height:ident[5] width:ident[4]];
     }
     
     else if (isLoadedFilePNG) {

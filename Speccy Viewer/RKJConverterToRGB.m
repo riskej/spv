@@ -1038,7 +1038,7 @@
 }
 
 
-- (void) convertPNGtoSCR:(UIImage *)inputImage {
+- (int) convertPNGtoSCR:(UIImage *)inputImage {
     
     CGImageRef inputCGImage = [inputImage CGImage];
     NSUInteger width = CGImageGetWidth(inputCGImage);
@@ -1346,10 +1346,21 @@
         free(iipp);
         NSLog(@"Convert PNG > GIGA End! %i", 0);
     }
-    
+    Byte * newData=(Byte*)malloc(20000);
     if(zxWidth==32 && zxHeight==24) {
         if(chrMode==9) {
-            [self convChr6912:byteData];
+//            [self convChr6912:byteData];
+            for(int ch=0; ch<768; ch++) {
+                NSUInteger adrpix=(ch>>8)*2048 + (ch&255);
+                NSUInteger adratr=6144+ch;
+                NSUInteger src=7 + ch*9;
+                for(int i=0; i<8; i++) {
+                    newData[adrpix+i*256]=byteData[src+i];
+                }
+                newData[adratr]=byteData[src+8];
+            }
+            memcpy(byteData, newData, 6912);
+            
             len=6912;
         }
         if(chrMode==18) {
@@ -1373,11 +1384,13 @@
     free(sortCol);
     free(cntCol);
     free(byteData);
+    free(newData);
     
     CGColorSpaceRelease(colorSpace);
-//    CGImageRelease(inputCGImage);
+    CGImageRelease(inputCGImage);
     CGContextRelease(context);
-    return;
+//    NSLog(@"Convert OK! %i", 0);
+    return len;
 }
 
 
@@ -1488,10 +1501,10 @@
     Byte * newData=(Byte*)malloc(6912);
     NSUInteger src=7;
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch>>8)*2048 + ch;
+        NSUInteger adrpix=(ch>>8)*2048 + (ch&255);
         NSUInteger adratr=6144+ch;
         for(int i=0; i<8; i++) {
-            newData[adrpix+i]=byteData[src++];
+            newData[adrpix+i*256]=byteData[src++];
         }
         newData[adratr]=byteData[src++];
     }
@@ -1505,14 +1518,14 @@
     Byte * newData=(Byte*)malloc(6912*2);
     NSUInteger src=7;
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch>>8)*2048 + ch;
+        NSUInteger adrpix=(ch>>8)*2048 + (ch&255);
         NSUInteger adratr=6144+ch;
         for(int i=0; i<8; i++) {
-            newData[adrpix+i]=byteData[src++];
+            newData[adrpix+i*256]=byteData[src++];
         }
         newData[adratr]=byteData[src++];
         for(int i=0; i<8; i++) {
-            newData[6912+adrpix+i]=byteData[src++];
+            newData[6912+adrpix+i*256]=byteData[src++];
         }
         newData[6912+adratr]=byteData[src++];
     }
@@ -1525,7 +1538,7 @@
     int atrInCh=2;
     int mode;
     if(chMode==20) mode=4;
-    else mode=8, atrInCh=4;
+    else {mode=8, atrInCh=4;}
     Byte * newData=(Byte*)malloc(256+12288+768*mode);
     newData[0]='M'; // signature
     newData[1]='G';
@@ -1536,18 +1549,16 @@
     newData[6]=0; // border 2
     
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=(ch>>8)*2048 + ch;
-        NSUInteger atradr=12288+ch*atrInCh;
+        NSUInteger adrpix=256+(ch>>8)*2048 + (ch&255);
+        NSUInteger atradr=256+12288+ch*atrInCh;
         NSUInteger src=7 + ch*chMode;
         for(int i=0; i<8; i++) {
-            newData[256+adrpix+i]=byteData[src+i];
-            newData[256+adrpix+6144+i]=byteData[src+i+chMode/2];
+            newData[adrpix+i*256]=byteData[src+i];
+            newData[adrpix+6144+i*256]=byteData[src+i+chMode/2];
         }
         for(int a=0; a<atrInCh; a++) {
-            int b=byteData[src+8+a];
-            newData[256+atradr+a]=b;
-            b=byteData[src+8+a+chMode/2];
-            newData[256+atradr+a+384*mode]=b;
+            newData[atradr+a]=byteData[src+8+a];
+            newData[atradr+a+384*mode]=byteData[src+8+a+chMode/2];
         }
     }
     memcpy(byteData, newData, 256+12288+768*mode);

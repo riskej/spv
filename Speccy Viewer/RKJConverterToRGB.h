@@ -27,6 +27,6 @@
 - (void) openZX_img_mg1:(NSData*)datafile;
 - (void) openZX_img_mg1_noflic:(NSData*)datafile;
 - (void) openZX_chr:   (NSData*)datafile;
--(void) convertPNGtoSCR:(UIImage *)inputImage;
+-(int) convertPNGtoSCR:(UIImage *)inputImage;
 
 @end
