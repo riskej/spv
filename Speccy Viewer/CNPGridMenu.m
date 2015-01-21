@@ -305,7 +305,7 @@
 - (void)presentGridMenu:(CNPGridMenu *)menu animated:(BOOL)flag completion:(void (^)(void))completion {
     [menu setModalPresentationStyle:CNP_IS_IOS8?UIModalPresentationOverCurrentContext:UIModalPresentationCurrentContext];
     [menu setModalTransitionStyle:UIModalTransitionStyleCrossDissolve];
-    menu.modalPresentationCapturesStatusBarAppearance = YES;
+    menu.modalPresentationCapturesStatusBarAppearance = NO;
     
     if (CNP_IS_IOS8 == NO) {
         CGRect windowBounds = self.view.window.bounds;

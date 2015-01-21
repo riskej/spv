@@ -98,6 +98,7 @@
     
 }
 
+#pragma mark - Convert methods
 
 - (void) convert6144_n_rgb:(int) mode_scr {
     
@@ -269,6 +270,7 @@
     
 }
 
+
 - (void)pngConverter {
     
     self.view.backgroundColor = [UIColor blackColor];
@@ -278,12 +280,12 @@
     UIImage *incomingImage = [UIImage imageWithData:currentData];
     [imageToConvert convertPNGtoSCR:incomingImage];
     image02 =  imageToConvert.FinallyProcessedImage2;
-//    image01 =  imageToConvert.FinallyProcessedImage2;
-
-//    currentData = imageToConvert.convertedSpeccyScr01;
+    //    image01 =  imageToConvert.FinallyProcessedImage2;
+    
+    //    currentData = imageToConvert.convertedSpeccyScr01;
     newData = imageToConvert.convertedSpeccyScr01;
-//
-//    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
+    //
+    //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.mode_scr=2;
     imageToConvert.kRetina = kRetina;
     [imageToConvert openZX_chr:newData];
@@ -301,53 +303,180 @@
     isMG1Image = NO;
     [self showFlickeringPicture];
     
-    
-}
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 
--(BOOL)prefersStatusBarHidden{
-    return YES;
+#pragma mark - Menu
+
+- (void)showMenu {
+    
+    CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
+    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+    i01.title = @"Save *.png \nto Dropbox";
+    
+    CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
+    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+    i02.title = @"Save source \nto Dropbox";
+    
+    CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
+    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
+    i03.title = @"Open file from Dropbox";
+    
+    CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
+    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
+    i04.title = @"Share Image";
+    
+    CNPGridMenuItem *i05 = [[CNPGridMenuItem alloc] init];
+    i05.icon = [UIImage imageNamed:@"btn_menu@2x"];
+    i05.title = @"About";
+    
+    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i03, i01, i02, i04, i05]];
+    gridMenu.delegate = self;
+    [self presentGridMenu:gridMenu animated:YES completion:^{
+        NSLog(@"Grid Menu Presented");
+    }];
 }
 
--(void)scale:(id)sender {
+
+- (void)menuForSelectingModeToConvertFromPNG {
     
-    if([(UIPinchGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
-        _lastScale = 1.0;
-    }
+    CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
+    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+    i01.title = @"Convert to SCR";
     
-    CGFloat scale = 1.0 - (_lastScale - [(UIPinchGestureRecognizer*)sender scale]);
+    CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
+    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+    i02.title = @"Convert to IMG";
     
-    CGAffineTransform currentTransform = screenToShow.transform;
-    CGAffineTransform currentTransform2 = screenToShow2.transform;
-    CGAffineTransform newTransform = CGAffineTransformScale(currentTransform, scale, scale);
-    CGAffineTransform newTransform2 = CGAffineTransformScale(currentTransform2, scale, scale);
+    CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
+    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
+    i03.title = @"Convert to MG4";
     
-    [screenToShow setTransform:newTransform];
-    [screenToShow2 setTransform:newTransform2];
-    //    ScreenToShow.center = pinchRecognizer.view.center;
-    _lastScale = [(UIPinchGestureRecognizer*)sender scale];
+    CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
+    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
+    i04.title = @"Convert to MG2";
+    
+    CNPGridMenu *gridMenu2 = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i02, i03, i04]];
+    gridMenu2.delegate = self;
+    [self presentGridMenu:gridMenu2 animated:YES completion:^{
+        NSLog(@"Grid Menu 2 Presented");
+    }];
+    
 }
 
 
--(void)move:(id)sender {
-    
-    CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:canvas];
-    
-    if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
-        _firstX = [screenToShow center].x;
-        _firstY = [screenToShow center].y;
-    }
-    
-    translatedPoint = CGPointMake(_firstX+translatedPoint.x, _firstY+translatedPoint.y);
-    
-    [screenToShow setCenter:translatedPoint];
-    [screenToShow2 setCenter:translatedPoint];
+- (void)gridMenuDidTapOnBackground:(CNPGridMenu *)menu {
+    [self dismissGridMenuAnimated:YES completion:^{
+        NSLog(@"Grid Menu Dismissed With Background Tap");
+    }];
 }
 
+
+- (void)gridMenu:(CNPGridMenu *)menu didTapOnItem:(CNPGridMenuItem *)item {
+    [self dismissGridMenuAnimated:YES completion:^{
+        NSLog(@"Grid Menu Did Tap On Item: %@", item.title);
+        
+        //
+        
+        
+        if ([item.title isEqual: @"Open file from Dropbox"]) {
+            [self didPressChoose];
+        }
+        
+        else if ([item.title isEqual: @"Share Image"])
+            [self shareImage];
+        
+        else if ([item.title isEqual: @"Save *.png \nto Dropbox"]) {
+            
+            [self didPressLink];
+            
+            if (image01 != nil) {
+                
+                //            CGSize newSize = CGSizeMake(inputScreenWidth*2, inputScreenHeight*2);
+                //            UIGraphicsBeginImageContext( newSize );
+                //
+                //            [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+                //
+                //                if (!isLoadedFilePNG) {
+                //                    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
+                //                }
+                //
+                //            UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
+                //            UIGraphicsEndImageContext();
+                
+                //            NSData *noflicImageData = UIImagePNGRepresentation(noflicImage);
+                NSData *noflicImageData;
+                
+                if (!is6912Image) {
+                    noflicImageData = UIImagePNGRepresentation(imageForNoflicDemonstration01);
+                }
+                
+                else {
+                    noflicImageData = UIImagePNGRepresentation(image01);
+                }
+                
+                NSString *filename = @"Picture.png";
+                NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+                NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+                [noflicImageData writeToFile:localPath atomically:YES];
+                
+                NSString *destDir = @"/SpeccyViewer/";
+                [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+            }
+        }
+        
+        else if ([item.title isEqual: @"Save source \nto Dropbox"]) {
+            
+            [self didPressLink];
+            
+            if (newData != nil) {
+                
+                NSData *noflicImageData = newData;
+                NSUInteger imageSize = [newData length];
+                
+                if (imageSize == 6912) {
+                    
+                    NSString *filename = @"Picture.scr";
+                    NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+                    NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+                    [noflicImageData writeToFile:localPath atomically:YES];
+                    
+                    NSString *destDir = @"/SpeccyViewer/";
+                    [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+                    
+                }
+                
+                else if ((inputScreenWidth > 240) || (inputScreenHeight > 160)) { /* !!!!!!!!!!!!!!*/
+                    
+                    NSString *filename = @"Picture.ch$";
+                    NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+                    NSString *localPath = [localDir stringByAppendingPathComponent:filename];
+                    [noflicImageData writeToFile:localPath atomically:YES];
+                    
+                    NSString *destDir = @"/SpeccyViewer/";
+                    [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
+                    
+                }
+                
+                else {
+                    
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No way!"
+                                                                    message:@"You can only save *.scr \n(6912 bytes) images"
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                }
+                
+            }
+        }
+        
+        
+    }];
+}
+
+
+#pragma mark - The Rest
 
 -(void)checkingForFileSize {
     
@@ -460,7 +589,8 @@
     }
     
     else if (isLoadedFilePNG) {
-        [self pngConverter];
+//        [self pngConverter];
+        [self menuForSelectingModeToConvertFromPNG];
     }
     
     else {
@@ -633,144 +763,6 @@
 }
 
 
-- (void)showMenu {
-    
-    CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
-    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
-    i01.title = @"Save *.png \nto Dropbox";
-    
-    CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
-    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
-    i02.title = @"Save source \nto Dropbox";
-    
-    CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
-    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
-    i03.title = @"Open file from Dropbox";
-    
-    CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
-    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
-    i04.title = @"Share Image";
-    
-    CNPGridMenuItem *i05 = [[CNPGridMenuItem alloc] init];
-    i05.icon = [UIImage imageNamed:@"btn_menu@2x"];
-    i05.title = @"About";
-    
-    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i03, i01, i02, i04, i05]];
-    gridMenu.delegate = self;
-    [self presentGridMenu:gridMenu animated:YES completion:^{
-        NSLog(@"Grid Menu Presented");
-    }];
-}
-
-- (void)gridMenuDidTapOnBackground:(CNPGridMenu *)menu {
-    [self dismissGridMenuAnimated:YES completion:^{
-        NSLog(@"Grid Menu Dismissed With Background Tap");
-    }];
-}
-
-- (void)gridMenu:(CNPGridMenu *)menu didTapOnItem:(CNPGridMenuItem *)item {
-    [self dismissGridMenuAnimated:YES completion:^{
-        NSLog(@"Grid Menu Did Tap On Item: %@", item.title);
-        
-        if ([item.title isEqual: @"Open file from Dropbox"]) {
-         
-            [self didPressChoose];
-            
-        }
-        
-        else if ([item.title isEqual: @"Share Image"])
-            [self shareImage];
-        
-        else if ([item.title isEqual: @"Save *.png \nto Dropbox"]) {
-            
-            [self didPressLink];
-        
-            if (image01 != nil) {
-
-//            CGSize newSize = CGSizeMake(inputScreenWidth*2, inputScreenHeight*2);
-//            UIGraphicsBeginImageContext( newSize );
-//        
-//            [image01 drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
-//                
-//                if (!isLoadedFilePNG) {
-//                    [image02 drawInRect:CGRectMake(0,0,newSize.width,newSize.height) blendMode:kCGBlendModeNormal alpha:0.5];
-//                }
-//        
-//            UIImage *noflicImage = UIGraphicsGetImageFromCurrentImageContext();
-//            UIGraphicsEndImageContext();
-            
-//            NSData *noflicImageData = UIImagePNGRepresentation(noflicImage);
-                NSData *noflicImageData;
-                
-                if (!is6912Image) {
-                    noflicImageData = UIImagePNGRepresentation(imageForNoflicDemonstration01);
-                }
-                
-                else {
-                    noflicImageData = UIImagePNGRepresentation(image01);
-                }
-                
-            NSString *filename = @"Picture.png";
-            NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-            NSString *localPath = [localDir stringByAppendingPathComponent:filename];
-            [noflicImageData writeToFile:localPath atomically:YES];
-        
-            NSString *destDir = @"/SpeccyViewer/";
-            [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
-        }
-        }
-        
-        else if ([item.title isEqual: @"Save source \nto Dropbox"]) {
-            
-            [self didPressLink];
-            
-            if (newData != nil) {
-                
-                NSData *noflicImageData = newData;
-                NSUInteger imageSize = [newData length];
-                
-                if (imageSize == 6912) {
-                    
-                NSString *filename = @"Picture.scr";
-                NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-                NSString *localPath = [localDir stringByAppendingPathComponent:filename];
-                [noflicImageData writeToFile:localPath atomically:YES];
-                
-                NSString *destDir = @"/SpeccyViewer/";
-                [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
-                    
-                }
-                
-                else if ((inputScreenWidth > 240) || (inputScreenHeight > 160)) { /* !!!!!!!!!!!!!!*/
-                    
-                    NSString *filename = @"Picture.ch$";
-                    NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-                    NSString *localPath = [localDir stringByAppendingPathComponent:filename];
-                    [noflicImageData writeToFile:localPath atomically:YES];
-                    
-                    NSString *destDir = @"/SpeccyViewer/";
-                    [self.restClient uploadFile:filename toPath:destDir withParentRev:nil fromPath:localPath];
-                    
-                }
-                
-                else {
-                    
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No way!"
-                                                                    message:@"You can only save *.scr \n(6912 bytes) images"
-                                                                   delegate:nil
-                                                          cancelButtonTitle:@"OK"
-                                                          otherButtonTitles:nil];
-                    [alert show];
-                }
-                
-            }
-        }
-        
-        
-    }];
-}
-
-
 -(void) addButtons {
     
     mainMenu = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -841,6 +833,42 @@
 
     }
 
+}
+
+
+-(void)scale:(id)sender {
+    
+    if([(UIPinchGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
+        _lastScale = 1.0;
+    }
+    
+    CGFloat scale = 1.0 - (_lastScale - [(UIPinchGestureRecognizer*)sender scale]);
+    
+    CGAffineTransform currentTransform = screenToShow.transform;
+    CGAffineTransform currentTransform2 = screenToShow2.transform;
+    CGAffineTransform newTransform = CGAffineTransformScale(currentTransform, scale, scale);
+    CGAffineTransform newTransform2 = CGAffineTransformScale(currentTransform2, scale, scale);
+    
+    [screenToShow setTransform:newTransform];
+    [screenToShow2 setTransform:newTransform2];
+    //    ScreenToShow.center = pinchRecognizer.view.center;
+    _lastScale = [(UIPinchGestureRecognizer*)sender scale];
+}
+
+
+-(void)move:(id)sender {
+    
+    CGPoint translatedPoint = [(UIPanGestureRecognizer*)sender translationInView:canvas];
+    
+    if([(UIPanGestureRecognizer*)sender state] == UIGestureRecognizerStateBegan) {
+        _firstX = [screenToShow center].x;
+        _firstY = [screenToShow center].y;
+    }
+    
+    translatedPoint = CGPointMake(_firstX+translatedPoint.x, _firstY+translatedPoint.y);
+    
+    [screenToShow setCenter:translatedPoint];
+    [screenToShow2 setCenter:translatedPoint];
 }
 
 
@@ -980,6 +1008,17 @@ loadMetadataFailedWithError:(NSError *)error {
 //    borderToShow.center = CGPointMake(size.width/2, size.height/2);
 //    borderToShow.frame = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
 
+}
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+-(BOOL)prefersStatusBarHidden{
+    return YES;
 }
 
 
