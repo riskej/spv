@@ -28,6 +28,7 @@
 @implementation ViewController
 
 {
+    int modeToConvertFromPNG;
     NSUInteger inputScreenHeight;
     NSUInteger inputScreenWidth;
     UILabel *noDataMessage;
@@ -286,7 +287,7 @@
     newData = imageToConvert.convertedSpeccyScr01;
     //
     //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
-    imageToConvert.mode_scr=2;
+    imageToConvert.mode_scr = modeToConvertFromPNG;
     imageToConvert.kRetina = kRetina;
     [imageToConvert openZX_chr:newData];
     image01 = imageToConvert.FinallyProcessedImage;
@@ -376,8 +377,30 @@
     [self dismissGridMenuAnimated:YES completion:^{
         NSLog(@"Grid Menu Did Tap On Item: %@", item.title);
         
-        //
+        // Handling Menu to Convert From PNG
         
+        if ([item.title isEqual: @"Convert to SCR"]) {
+            modeToConvertFromPNG = 2;
+            [self pngConverter];
+        }
+        
+        if ([item.title isEqual: @"Convert to IMG"]) {
+            modeToConvertFromPNG = 3;
+            [self pngConverter];
+        }
+        
+        if ([item.title isEqual: @"Convert to MG4"]) {
+            modeToConvertFromPNG = 5;
+            [self pngConverter];
+        }
+        
+        if ([item.title isEqual: @"Convert to MG2"]) {
+            modeToConvertFromPNG = 6;
+            [self pngConverter];
+        }
+        
+        
+        // Handling Main Menu
         
         if ([item.title isEqual: @"Open file from Dropbox"]) {
             [self didPressChoose];
@@ -434,9 +457,27 @@
                 NSData *noflicImageData = newData;
                 NSUInteger imageSize = [newData length];
                 
-                if (imageSize == 6912) {
+                if (imageSize >= 6912 && imageSize <= 18688) {
                     
-                    NSString *filename = @"Picture.scr";
+                    NSString *filename;
+                    
+                    if (modeToConvertFromPNG == 2) {
+                        filename = @"Picture.scr";
+                    }
+                    
+                    else if (modeToConvertFromPNG == 3) {
+                        filename = @"Picture.img";
+                    }
+                    
+                    else if (modeToConvertFromPNG == 5) {
+                        filename = @"Picture.mg4";
+                    }
+                    
+                    else if (modeToConvertFromPNG == 6) {
+                        filename = @"Picture.mg2";
+                    }
+                    
+                    
                     NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
                     NSString *localPath = [localDir stringByAppendingPathComponent:filename];
                     [noflicImageData writeToFile:localPath atomically:YES];
@@ -460,8 +501,8 @@
                 
                 else {
                     
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No way!"
-                                                                    message:@"You can only save *.scr \n(6912 bytes) images"
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No-No-No!"
+                                                                    message:@"You can't save this type of image."
                                                                    delegate:nil
                                                           cancelButtonTitle:@"OK"
                                                           otherButtonTitles:nil];

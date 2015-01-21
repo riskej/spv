@@ -1063,7 +1063,11 @@
     CGContextDrawImage(context, CGRectMake(0, 0, width, height), inputCGImage);
     
     
-    NSUInteger chrMode=24;
+    NSUInteger chrMode=9;
+    if(mode_scr==3) chrMode=18;
+    if(mode_scr==5) chrMode=20;
+    if(mode_scr==6) chrMode=24;
+    
     NSUInteger mode05=chrMode/2;
     
     int atrOffSet=8;
@@ -1494,6 +1498,8 @@
     memcpy(newData, byteData, 6912);
     free(newData);
 }
+
+
 -(void) convChr2Img:(Byte*)byteData {
     Byte * newData=(Byte*)malloc(6912*2);
     NSUInteger src=7;
@@ -1513,11 +1519,20 @@
     free(newData);
 }
 
+
 -(int) convChr2Mgx:(Byte*)byteData mode:(NSUInteger)mode{
     int atrInCh=2;
     if(mode==20) mode=4;
     else mode=8, atrInCh=4;
-    Byte * newData=(Byte*)malloc(12288+768*mode);
+    Byte * newData=(Byte*)malloc(256+12288+768*mode);
+    newData[0]='M'; // signature
+    newData[1]='G';
+    newData[2]='H';
+    newData[3]=1; // version
+    newData[4]=mode > 21 ? 2 : 4;
+    newData[5]=0; // border 1
+    newData[6]=0; // border 2
+    
     for(int ch=0; ch<768; ch++) {
         NSUInteger adrpix=(ch&768)*2048 + ch;
         NSUInteger atradr=12288+ch*atrInCh;
@@ -1531,9 +1546,10 @@
             newData[atradr+a+768*mode]=byteData[src+8+a+mode/2];
         }
     }
-    memcpy(newData, byteData, 12288+768*mode);
+    memcpy(newData, byteData, 256+12288+768*mode);
     free(newData);
-    return 12288+768*(int)mode;
+    return 256+12288+768*(int)mode;
 }
+
 
 @end;
