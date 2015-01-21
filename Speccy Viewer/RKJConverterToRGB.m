@@ -1495,8 +1495,9 @@
         }
         newData[adratr]=byteData[src++];
     }
-    memcpy(newData, byteData, 6912);
+    memcpy(byteData, newData, 6912);
     free(newData);
+
 }
 
 
@@ -1515,7 +1516,7 @@
         }
         newData[6912+adratr]=byteData[src++];
     }
-    memcpy(newData, byteData, 6912*2);
+    memcpy(byteData, newData, 6912*2);
     free(newData);
 }
 
@@ -1549,7 +1550,7 @@
             newData[256+atradr+a+384*mode]=b;
         }
     }
-    memcpy(newData, byteData, 256+12288+768*mode);
+    memcpy(byteData, newData, 256+12288+768*mode);
     free(newData);
     return 256+12288+768*mode;
 }
