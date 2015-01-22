@@ -398,6 +398,8 @@
     NSUInteger colorPalettePulsar [16] = {0x0, 0xca0000, 0x0000ca, 0xca00ca, 0x00ca00, 0xcaca00, 0x00caca, 0xcacaca,
         0x0, 0xfe0000, 0x0000fe, 0xfe00fe, 0x00fe00, 0xfefe00, 0x00fefe, 0xfefefe};
     
+    NSUInteger colorTabMgs [16] = {0x0, 0xca0000, 0xfe0000, 0x0000ca, 0x0000fe, 0xca00ca, 0xfe00fe, 0x00ca00, 0x00fe00, 0xcaca00, 0xfefe00,  0x00caca, 0x00fefe, 0xcacaca, 0xfefefe};
+    
     bool isInterlaceMode=true;
     
     NSUInteger inputWidth = 256*kRetina;
@@ -419,16 +421,18 @@
     NSUInteger firstByteOfCharsArrayOfFirstScreen=0;
     NSUInteger firstByteOfCharsArrayOfSecondScreen=0;
     
+    
     NSData *data = datafile;
     NSUInteger len = [data length];
     Byte *byteData = (Byte*)malloc(len);
     memcpy(byteData, [data bytes], len);
-    
+    NSUInteger chSize=byteData[4];
+    NSUInteger chAnd=255*chSize;
     BorderColor1 = byteData [5];
     BorderColor2 = byteData [6];
     NSLog(@"border1: %i", BorderColor1);
     NSLog(@"border2: %i", BorderColor2);
-    NSLog(@"screen length: %lu", (unsigned long)data.length);
+    NSLog(@"screen length: %i", mode_scr);// (unsigned long)data.length);
     
     if (mode_scr==3) {
         firstByteOfPixelArrayOfFirstScreen = 0;
@@ -457,7 +461,12 @@
         firstByteOfCharsArrayOfFirstScreen = 256+6144*2;
         firstByteOfCharsArrayOfSecondScreen = 256+6144*2+3072;
     }
-        
+    if (mode_scr==11) {
+        firstByteOfPixelArrayOfFirstScreen = 7;
+        firstByteOfPixelArrayOfSecondScreen = 7+6144;
+        firstByteOfCharsArrayOfFirstScreen = 12295;
+        firstByteOfCharsArrayOfSecondScreen = 24583;
+    }
     for (int line=0; line<192; line++) {
         
         [self calculateAddressForPixel:line andMode:mode_scr];
@@ -465,18 +474,34 @@
         for (int xchar=0; xchar<32; xchar++) {
 
             NSUInteger byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
+            NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
+            
             NSUInteger atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
             bool flash1 = atr1 & 128;
             NSUInteger bright1 = atr1 & 64 ? 8 : 0;
             NSUInteger ink1=(UInt32)colorPalettePulsar [(atr1 & 7) + bright1];
             NSUInteger paper1=(UInt32)colorPalettePulsar [(atr1 >> 3) & 7 + bright1];
             
-            NSUInteger byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
+            
             NSUInteger atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
             bool flash2 = atr2 & 128;
             NSUInteger bright2 = atr2 & 64 ? 8 : 0;
             NSUInteger ink2=(UInt32)colorPalettePulsar [(atr2 & 7) + bright2];
             NSUInteger paper2=(UInt32)colorPalettePulsar [(atr2 >> 3) & 7 + bright2];
+            
+            if(mode_scr==11) {
+                byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + line*32 + xchar];
+                byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + line*32 + xchar];
+                ink1= byteData[firstByteOfCharsArrayOfFirstScreen + (line&chAnd)*32*2  + xchar*2];
+                ink1=(UInt32)colorTabMgs [ink1];
+                paper1=byteData[firstByteOfCharsArrayOfFirstScreen + (line&chAnd)*32*2  + xchar*2+1];
+                paper1=(UInt32)colorTabMgs [paper1];
+                
+                ink2= byteData[firstByteOfCharsArrayOfSecondScreen + (line&chAnd)*32*2  + xchar*2];
+                ink2=(UInt32)colorTabMgs [ink2];
+                paper2=byteData[firstByteOfCharsArrayOfSecondScreen + (line&chAnd)*32*2  + xchar*2+1];
+                paper2=(UInt32)colorTabMgs [paper2];
+            }
             int xx=0;
             for (int xBit=128; xBit>0; xBit/=2,xx++) {
                 UInt32 val_1_0=byte1 & xBit ? (int)ink1 : (int)paper1;
@@ -567,6 +592,9 @@
     UInt32 * inputPixels_firstImage_noFlash;
     UInt32 * inputPixels_firstImage_invertedFlash;
     
+    NSUInteger colorInkMgs [15] = {0, 1, 0101, 2, 0102, 3, 0103, 4, 0104, 5, 0105, 6, 0106, 7, 0107};
+    NSUInteger colorPapMgs [15] = {0, 010, 0110, 020, 0120, 030, 0130, 040, 0140, 050, 0150, 060, 0160, 070, 0170};
+    
     NSUInteger inputWidth = 256*kRetina;
     NSUInteger inputHeight = 192*kRetina;
     
@@ -588,12 +616,13 @@
     NSUInteger len = [data length];
     Byte *byteData = (Byte*)malloc(len);
     memcpy(byteData, [data bytes], len);
-    
+    NSUInteger chSize=byteData[4];
+    NSUInteger chAnd=255*chSize;
     BorderColor1 = byteData [5];
     BorderColor2 = byteData [6];
     NSLog(@"border1: %i", BorderColor1);
     NSLog(@"border2: %i", BorderColor2);
-    NSLog(@"screen length: %lu", (unsigned long)data.length);
+    NSLog(@"screen length: %i", mode_scr);// (unsigned long)data.length);
     
     if (mode_scr==3) {
         firstByteOfPixelArrayOfFirstScreen = 0;
@@ -622,7 +651,12 @@
         firstByteOfCharsArrayOfFirstScreen = 256+6144*2;
         firstByteOfCharsArrayOfSecondScreen = 256+6144*2+3072;
     }
-    
+    if (mode_scr==11) {
+        firstByteOfPixelArrayOfFirstScreen = 7;
+        firstByteOfPixelArrayOfSecondScreen = 7+6144;
+        firstByteOfCharsArrayOfFirstScreen = 12295;
+        firstByteOfCharsArrayOfSecondScreen = 24583;
+    }
     for (int line=0; line<192; line++) {
         
         [self calculateAddressForPixel:line andMode:mode_scr];
@@ -631,14 +665,27 @@
             
             int byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + shiftPixelAdress + xchar];
             int atr1= byteData[firstByteOfCharsArrayOfFirstScreen + shiftZxcharAdress + xchar];
-            int flash1 = atr1 & 128;
-            int bright1 = atr1 & 64;
+            
             
             int byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + shiftPixelAdress + xchar];
             int atr2= byteData[firstByteOfCharsArrayOfSecondScreen + shiftZxcharAdress + xchar];
+            
+            
+            if(mode_scr==11) {
+                byte1 = byteData[firstByteOfPixelArrayOfFirstScreen + line*32 + xchar];
+                byte2 = byteData[firstByteOfPixelArrayOfSecondScreen + line*32 + xchar];
+                int ink1= byteData[firstByteOfCharsArrayOfFirstScreen + (line&chAnd)*32*2  + xchar*2];
+                int paper1=byteData[firstByteOfCharsArrayOfFirstScreen + (line&chAnd)*32*2  + xchar*2+1];
+                atr1=colorInkMgs[ink1] | colorPapMgs[paper1];
+                
+                int ink2= byteData[firstByteOfCharsArrayOfSecondScreen + (line&chAnd)*32*2  + xchar*2];
+                int paper2=byteData[firstByteOfCharsArrayOfSecondScreen + (line&chAnd)*32*2  + xchar*2+1];
+                atr2=colorInkMgs[ink2] | colorPapMgs[paper2];
+            }
+            int flash1 = atr1 & 128;
+            int bright1 = atr1 & 64;
             int flash2 = atr2 & 128;
             int bright2 = atr2 & 64;
-            
             // i - ink , p - paper
             UInt32 i1i2=[self calculateColorForGiga:atr1 :atr2];
             UInt32 i1p2=[self calculateColorForGiga:atr1 :(bright2|((atr2>>3)&7))];
@@ -1012,7 +1059,8 @@
     //          7 – mg1
     //          8 - mc
     //          9 - chr$
-    //          10- rgb(3color)
+    //          10- rgb(3color)\
+    //          11- mgs
     switch (mode) {
         case 2:
         case 3:

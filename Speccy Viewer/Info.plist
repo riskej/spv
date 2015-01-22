@@ -45,7 +45,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>93</string>
+	<string>94</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIMainStoryboardFile</key>
@@ -95,6 +95,7 @@
 					<string>mg1</string>
 					<string>ch$</string>
 					<string>rgb</string>
+					<string>mgs</string>
 				</array>
 				<key>public.mime-type</key>
 				<string>image/speccy</string>

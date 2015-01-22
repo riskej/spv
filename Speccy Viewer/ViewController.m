@@ -591,9 +591,9 @@
         //          8 - mc
         //          9 - chr$
     }
-    else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
-        [self convertChr$:9 height:ident[5] width:ident[4]];
-    }
+//    else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
+//        [self convertChr$:9 height:ident[5] width:ident[4]];
+//    }
     
     else if (incomingFileSize == 6144) {
         self.view.backgroundColor = [UIColor blackColor];
@@ -632,6 +632,10 @@
     
     else if (incomingFileSize == 18432) {
         [self convert6144_n_rgb:10];
+    }
+    
+    else if (incomingFileSize == 36871) {
+        if (ident[0]=='M' && ident[1]=='G' && ident[2]=='S') [self convertImgMgx:11];
     }
     
     else if (ident[0]=='c' && ident[1]=='h' && ident[2]=='r' && ident[3]=='$') {
@@ -914,7 +918,7 @@
         _firstX = [screenToShow center].x;
         _firstY = [screenToShow center].y;
     }
-    
+    NSLog(@"x:%f  y:%f", translatedPoint.x, translatedPoint.y);
     translatedPoint = CGPointMake(_firstX+translatedPoint.x, _firstY+translatedPoint.y);
     
     [screenToShow setCenter:translatedPoint];
