@@ -918,7 +918,6 @@
         _firstX = [screenToShow center].x;
         _firstY = [screenToShow center].y;
     }
-    NSLog(@"x:%f  y:%f", translatedPoint.x, translatedPoint.y);
     translatedPoint = CGPointMake(_firstX+translatedPoint.x, _firstY+translatedPoint.y);
     
     [screenToShow setCenter:translatedPoint];
