@@ -289,7 +289,7 @@
     //
     //    RKJConverterToRGB *convertedImage = [[RKJConverterToRGB alloc] init];
     imageToConvert.kRetina = kRetina;
-    NSLog(@"Convert OK! %i", size);
+//    NSLog(@"Convert OK! %i", size);
     if(size==6912) [imageToConvert openZX_scr6912:newData];
     else if(size==13824 || size == 15616 || size==18688) [imageToConvert openZX_img_mgX_noflic:newData];
     else [imageToConvert openZX_chr:newData];

@@ -1346,21 +1346,11 @@
         free(iipp);
         NSLog(@"Convert PNG > GIGA End! %i", 0);
     }
-    Byte * newData=(Byte*)malloc(20000);
+    
     if(zxWidth==32 && zxHeight==24) {
         if(chrMode==9) {
-//            [self convChr6912:byteData];
-            for(int ch=0; ch<768; ch++) {
-                NSUInteger adrpix=(ch>>8)*2048 + (ch&255);
-                NSUInteger adratr=6144+ch;
-                NSUInteger src=7 + ch*9;
-                for(int i=0; i<8; i++) {
-                    newData[adrpix+i*256]=byteData[src+i];
-                }
-                newData[adratr]=byteData[src+8];
-            }
-            memcpy(byteData, newData, 6912);
-            
+        
+        [self convChr6912:byteData];
             len=6912;
         }
         if(chrMode==18) {
@@ -1384,10 +1374,9 @@
     free(sortCol);
     free(cntCol);
     free(byteData);
-    free(newData);
     
     CGColorSpaceRelease(colorSpace);
-    CGImageRelease(inputCGImage);
+//    CGImageRelease(inputCGImage);
     CGContextRelease(context);
 //    NSLog(@"Convert OK! %i", 0);
     return len;
@@ -1466,29 +1455,30 @@
     
     // p0p1 - 1   i0i1 - 2  i0p1 - 3   p0i1 - 4
     
-    // 5721   4500   1682  800
     NSUInteger num=amount;
     if(amount > 3) num=4;
     int ipadr=0;
+    int c0=mt[0];
     for(int atr1=0; atr1<128; atr1++) {
         for (int atr2=0; atr2<128; atr2++) {
-            int ifind=0;
             int ixip[4]={3,3,3,3};
-            for (int i=0; i<num; i++) {
-                BOOL find=false;
-                if(mt[i]==iipp[ipadr+0]) ixip[0]=i, find=true;
-                if(mt[i]==iipp[ipadr+1]) ixip[1]=i, find=true;
-                if(mt[i]==iipp[ipadr+2]) ixip[2]=i, find=true;
-                if(mt[i]==iipp[ipadr+3]) ixip[3]=i, find=true;
-                if (find) ifind++;
+            if(c0==iipp[ipadr+0] || c0==iipp[ipadr+1] || c0==iipp[ipadr+2] || c0==iipp[ipadr+3]) {
+                int ifind=0;
+                for (int i=0; i<num; i++) {
+                    BOOL find=false;
+                    if(mt[i]==iipp[ipadr+0]) ixip[0]=i, find=true;
+                    if(mt[i]==iipp[ipadr+1]) ixip[1]=i, find=true;
+                    if(mt[i]==iipp[ipadr+2]) ixip[2]=i, find=true;
+                    if(mt[i]==iipp[ipadr+3]) ixip[3]=i, find=true;
+                    if (find) ifind++;
+                }
+                if (ifind>=num) return (ixip[3]<<22) | (ixip[2]<<20) | (ixip[1]<<18) | (ixip[0]<<16) | (atr2<<8) | atr1;
             }
-            if (ifind>=num) return (ixip[3]<<22) | (ixip[2]<<20) | (ixip[1]<<18) | (ixip[0]<<16) | (atr2<<8) | atr1;
             ipadr+=4;
         }
     }
     return  0b111001000101010001001011;
 }
-
 -(int) get2colfrom1:(int)col1 {
     int c1=col1 & 15;
     c1=(c1>>1) + ((c1 & 1) << 3);
@@ -1536,10 +1526,11 @@
 
 -(int) convChr2Mgx:(Byte*)byteData mode:(NSUInteger)chMode{
     int atrInCh=2;
-    int mode;
-    if(chMode==20) mode=4;
-    else {mode=8, atrInCh=4;}
-    Byte * newData=(Byte*)malloc(256+12288+768*mode);
+    int mode=4;
+    int shift=1536;
+    if(chMode==24) mode=8, atrInCh=4, shift=3072;
+    int len=256+12288+(768*mode);
+    Byte * newData=(Byte*)malloc(len);
     newData[0]='M'; // signature
     newData[1]='G';
     newData[2]='H';
@@ -1549,21 +1540,21 @@
     newData[6]=0; // border 2
     
     for(int ch=0; ch<768; ch++) {
-        NSUInteger adrpix=256+(ch>>8)*2048 + (ch&255);
-        NSUInteger atradr=256+12288+ch*atrInCh;
+        NSUInteger adrpix=256 + (ch>>8)*2048 + (ch&255);
+        NSUInteger atradr=256 + 12288 + (ch&0x3e0)*atrInCh + (ch&31);
         NSUInteger src=7 + ch*chMode;
         for(int i=0; i<8; i++) {
-            newData[adrpix+i*256]=byteData[src+i];
-            newData[adrpix+6144+i*256]=byteData[src+i+chMode/2];
+            newData[adrpix + i*256]=byteData[src + i];
+            newData[adrpix + 6144 + i*256]=byteData[src + i + chMode/2];
         }
         for(int a=0; a<atrInCh; a++) {
-            newData[atradr+a]=byteData[src+8+a];
-            newData[atradr+a+384*mode]=byteData[src+8+a+chMode/2];
+            newData[atradr + a*32]=byteData[src + 8 + a];
+            newData[atradr + a*32 + shift]=byteData[src + 8 + a + chMode/2];
         }
     }
-    memcpy(byteData, newData, 256+12288+768*mode);
+    memcpy(byteData, newData, len);
     free(newData);
-    return 256+12288+768*mode;
+    return len;
 }
 
 
