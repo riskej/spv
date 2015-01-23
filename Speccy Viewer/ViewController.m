@@ -31,6 +31,7 @@
     int modeToConvertFromPNG;
     NSUInteger inputScreenHeight;
     NSUInteger inputScreenWidth;
+    NSUInteger curTypeFile;
     UILabel *noDataMessage;
     UILabel *noDataMessage2;
     UILabel *noDataMessage3;
@@ -73,7 +74,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // we are fulez
+    // we are Rulez
     
     // riskej's message
     
@@ -85,7 +86,8 @@
     dropboxChooserInView = [[DBChooser alloc] initWithAppKey:@"2dn2a1a9kh6xp0u"];
     
     kRetina = 2;
-
+    curTypeFile=0;
+    
     self.view.backgroundColor = [UIColor blackColor];
     
     if (!isDropboxActive) {
@@ -96,6 +98,7 @@
 
     
     [self setupTouchInterface];
+    
     
 }
 
@@ -119,7 +122,7 @@
     screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-128, self.view.center.y-96, 256, 192)];
     screenToShow2.image = convertedImage.FinallyProcessedImage;
     screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
-    
+    curTypeFile=1;
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     [self.view addSubview:screenToShow2];
@@ -140,7 +143,7 @@
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
     
-    
+    curTypeFile=1;
     isNoflicMode = NO;
     isFlashImage = YES;
     is6912Image = YES;
@@ -161,7 +164,7 @@
     
     image01 = convertedImage.FinallyProcessedImage;
     image02 = convertedImage.FinallyProcessedImage2;
-    
+    imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
     int yy = height*8;
     int xx = width*8;
     
@@ -172,7 +175,7 @@
     screenToShow2 = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-xx/2, self.view.center.y-yy/2, xx, yy)];
     screenToShow2.image = convertedImage.FinallyProcessedImage2;
     screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
-    
+    curTypeFile=1;
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     [self.view addSubview:screenToShow2];
@@ -218,7 +221,7 @@
     
     imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
     imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
-    
+    curTypeFile=1;
     isLoadedFilePNG = NO;
     isNoflicMode = NO;
     isFlashImage = NO;
@@ -261,7 +264,7 @@
     
     imageForNoflicDemonstration01 = convertedImage.FinallyProcessedImage;
 //    imageForNoflicDemonstration02 = convertedImage.FinallyProcessedImage2;
-    
+    curTypeFile=1;
     isLoadedFilePNG = NO;
     isNoflicMode = NO;
     isFlashImage = NO;
@@ -302,7 +305,7 @@
     
     NSLog(@"input wide width: %i", (int)inputScreenWidth);
     NSLog(@"input wide height: %i", (int)inputScreenHeight);
-    
+    curTypeFile=2;
     isNoflicMode = NO;
     isFlashImage = NO;
     is6912Image = YES;
@@ -317,26 +320,33 @@
 - (void)showMenu {
     
     CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
-    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
-    i01.title = @"Save *.png \nto Dropbox";
+    i01.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
+    i01.title = @"Open file from Dropbox";
     
     CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
-    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
-    i02.title = @"Save source \nto Dropbox";
+    i02.icon = [UIImage imageNamed:@"btn_share@2x"];
+    i02.title = @"Share Image";
     
     CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
-    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
-    i03.title = @"Open file from Dropbox";
+    i03.icon = [UIImage imageNamed:@"btn_menu@2x"];
+    i03.title = @"About";
     
     CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
-    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
-    i04.title = @"Share Image";
-    
-    CNPGridMenuItem *i05 = [[CNPGridMenuItem alloc] init];
-    i05.icon = [UIImage imageNamed:@"btn_menu@2x"];
-    i05.title = @"About";
-    
-    CNPGridMenu *gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i03, i01, i02, i04, i05]];
+    if(curTypeFile==1) {
+        i04.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+        i04.title = @"Save *.png \nto Dropbox";
+    }
+    if(curTypeFile==2) {
+        i04.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+        i04.title = @"Save source \nto Dropbox";
+    }
+    CNPGridMenu *gridMenu;
+    if(curTypeFile==0) {
+        gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i03]];
+    }
+    else {
+        gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i04, i02, i03]];
+    }
     gridMenu.delegate = self;
     [self presentGridMenu:gridMenu animated:YES completion:^{
         NSLog(@"Grid Menu Presented");
@@ -534,7 +544,6 @@
     // cls
     inputScreenWidth = 256;
     inputScreenHeight = 192;
-    
     for (UIView *view in self.view.subviews)
     {
         [view removeFromSuperview];
@@ -648,7 +657,7 @@
     }
     
     else {
-        
+        curTypeFile=0;
         self.view.backgroundColor = [UIColor colorWithRed:0.79 green:0 blue:0.79 alpha:1];
         
         noDataMessage3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
@@ -657,6 +666,8 @@
         noDataMessage3.textAlignment = NSTextAlignmentCenter;
         noDataMessage3.numberOfLines = 0;
         noDataMessage3.text = [NSString stringWithFormat:@"Seems like the image you're loading \nis not a valid ZX Spectrum image"];
+//        screenToShow= nil;
+//        screenToShow2= nil;
         [self.view addSubview:noDataMessage3];
     }
     
@@ -995,21 +1006,16 @@ loadMetadataFailedWithError:(NSError *)error {
              // filename
 //             nameOfIncomingFile = results[2];
              
-             NSCharacterSet *cset = [NSCharacterSet characterSetWithCharactersInString:@".png"];
-             NSRange range = [givenScreen.name rangeOfCharacterFromSet:cset];
-             if (range.location == NSNotFound) {
+             NSString *cset = @".png";
+             NSRange range = [givenScreen.name rangeOfString:cset];
+             NSString *cset2 = @".PNG";
+             NSRange range2 = [givenScreen.name rangeOfString:cset2];
+             if (range.location == NSNotFound && range2.location == NSNotFound) {
                  isLoadedFilePNG = NO;
              } else {
                  isLoadedFilePNG = YES;
              }
 
-             NSCharacterSet *cset2 = [NSCharacterSet characterSetWithCharactersInString:@".PNG"];
-             NSRange range2 = [givenScreen.name rangeOfCharacterFromSet:cset2];
-             if (range2.location == NSNotFound) {
-                 isLoadedFilePNG = NO;
-             } else {
-                 isLoadedFilePNG = YES;
-             }
              
 //             NSString *incomingString = [givenScreen.link absoluteString];
 //             NSLog(@"Link: %@", incomingString);
