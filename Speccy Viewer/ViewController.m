@@ -597,22 +597,22 @@
         self.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.79 alpha:1];
         
 
-        noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 280, self.view.frame.size.height-60)];
+        noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width-40, self.view.frame.size.height-60)];
         noDataMessage.textColor = [UIColor whiteColor];
         noDataMessage.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
-        noDataMessage.textAlignment = NSTextAlignmentCenter;
+//        noDataMessage.textAlignment = NSTextAlignmentCenter;
         noDataMessage.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
         noDataMessage.numberOfLines = 0;
-        noDataMessage.text = [NSString stringWithFormat:@"Welcome to Speccy Viewer! \n\nTo open an ZX Spectrum image please use 'Open in...' menu in Safari/Mail/Any app or just open it from your Dropbox. \n\nAlso you can convert PNG images to ZX Spectrum format. Just open a PNG from your Dropbox folder and select mode you want to convert in. \n\nSpeccy viewer can open:\nscr (6144, 6912), img, mc, mgs, mg8, mg4, mg2, mg1, rgb, ch$ (scr, img, mg4, mg2). \n\nSpeccy Viewer can convert to:\nscr, img, mg4, mg2, ch$ (scr, img, mg4, mg2)."];
+        noDataMessage.text = [NSString stringWithFormat:@"             Welcome to Speccy Viewer! \n\nTo open an ZX Spectrum image please use 'Open in...' menu in Safari/Mail/Any app or just open it from your Dropbox. \n\nAlso you can convert PNG images to ZX Spectrum format. Just open a PNG from your Dropbox folder and select mode you want to convert in. \n\nSpeccy viewer can open:\nscr (6144, 6912), img, mc, mgs, mg8, mg4, mg2, mg1, rgb, ch$ (scr, img, mg4, mg2). \n\nSpeccy Viewer can convert to:\nscr, img, mg4, mg2, ch$ (scr, img, mg4, mg2)."];
         [self.view addSubview:noDataMessage];
         
 
-//        noDataMessage2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height+80)];
-//        noDataMessage2.textColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8];
-//        noDataMessage2.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
+//        noDataMessage2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 260)];
+//        noDataMessage2.textColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
+//        noDataMessage2.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:14];
 //        noDataMessage2.textAlignment = NSTextAlignmentCenter;
 //        noDataMessage2.numberOfLines = 0;
-//        noDataMessage2.text = [NSString stringWithFormat:@"You can view standard modes \nas well as multicolor, gigascreen & multigigascreen."];
+//        noDataMessage2.text = [NSString stringWithFormat:@"Welcome to Speccy Viewer!"];
 //        [self.view addSubview:noDataMessage2];
         
         // modes =  1 - 6144
@@ -1087,7 +1087,7 @@ loadMetadataFailedWithError:(NSError *)error {
 - (void) viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator {
     
     noDataMessage.center = CGPointMake(size.width/2, size.height/2);
-    noDataMessage2.center = CGPointMake(size.width/2, size.height/2+40);
+//    noDataMessage2.center = CGPointMake(size.width, size.height/2);
     noDataMessage3.center = CGPointMake(size.width/2, size.height/2);
     flickerImages.center = CGPointMake(size.width/2, size.height/2);
     screenToShow.center = CGPointMake(size.width/2, size.height/2);
