@@ -479,7 +479,7 @@
                 NSData *noflicImageData = currentData;
                 NSUInteger imageSize = [currentData length];
                 
-                if (imageSize >= 6912 && imageSize <= 18688) {
+                if (((inputScreenWidth == 256) || (inputScreenHeight == 192)) && (imageSize >= 6912 && imageSize <= 19456)) {
                     
                     NSString *filename;
                     
@@ -499,6 +499,11 @@
                         filename = @"Picture.mg2";
                     }
                     
+                    else if (/*modeToConvertFromPNG == 6 ||*/ imageSize == 19456) {
+                        filename = @"Picture.mg1";
+                    }
+                    
+                    
 //                    else
 //                        filename = @"Picture.scr";
                     
@@ -512,7 +517,7 @@
                     
                 }
                 
-                else if ((inputScreenWidth > 240) || (inputScreenHeight > 160)) { /* !!!!!!!!!!!!!!*/
+                else if ((inputScreenWidth > 256) || (inputScreenHeight > 192)) { /* !!!!!!!!!!!!!!*/
                     
                     NSString *filename = @"Picture.ch$";
                     NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
