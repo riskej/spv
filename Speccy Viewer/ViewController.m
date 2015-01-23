@@ -123,6 +123,7 @@
     screenToShow2.image = convertedImage.FinallyProcessedImage;
     screenToShow2.transform = CGAffineTransformMakeScale(1, 1);
     curTypeFile=1;
+    isNoflicMode=YES;
     [self.view addSubview:screenToShow];
     [self.view insertSubview:screenToShow belowSubview:mainMenu];
     [self.view addSubview:screenToShow2];
@@ -332,20 +333,18 @@
     i03.title = @"About";
     
     CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
-    if(curTypeFile==1) {
-        i04.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
-        i04.title = @"Save *.png \nto Dropbox";
-    }
-    if(curTypeFile==2) {
-        i04.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
-        i04.title = @"Save source \nto Dropbox";
-    }
+    i04.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+    i04.title = @"Save *.png \nto Dropbox";
+    
+    CNPGridMenuItem *i05 = [[CNPGridMenuItem alloc] init];
+    i05.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+    i05.title = @"Save source \nto Dropbox";
     CNPGridMenu *gridMenu;
     if(curTypeFile==0) {
         gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i03]];
     }
     else {
-        gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i04, i02, i03]];
+        gridMenu = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i04, i05, i02, i03]];
     }
     gridMenu.delegate = self;
     [self presentGridMenu:gridMenu animated:YES completion:^{
@@ -742,7 +741,7 @@
 //    UITouch *touch = [[event allTouches] anyObject];
 //    CGPoint touchCoordinates = [touch locationInView:self.view];
     
-    if (!isNoflicMode && image01 != nil) {
+    if (!isNoflicMode && image01 != nil && curTypeFile!=0) {
         [flickerImages removeFromSuperview];
         [self showNoflicPicture];
         isNoflicMode = YES;
