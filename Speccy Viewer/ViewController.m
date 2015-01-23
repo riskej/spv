@@ -479,7 +479,7 @@
                 NSData *noflicImageData = currentData;
                 NSUInteger imageSize = [currentData length];
                 
-                if (((inputScreenWidth == 256) || (inputScreenHeight == 192)) && (imageSize >= 6912 && imageSize <= 19456)) {
+                if (((inputScreenWidth == 256) && (inputScreenHeight == 192)) && (imageSize >= 6912 && imageSize <= 19456)) {
                     
                     NSString *filename;
                     
@@ -608,7 +608,7 @@
 //        noDataMessage.textAlignment = NSTextAlignmentCenter;
         noDataMessage.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
         noDataMessage.numberOfLines = 0;
-        noDataMessage.text = [NSString stringWithFormat:@"             Welcome to Speccy Viewer! \n\nTo open an ZX Spectrum image please use 'Open in...' menu in Safari/Mail/Any app or just open it from your Dropbox. \n\nAlso you can convert PNG images to ZX Spectrum format. Just open a PNG from your Dropbox folder and select mode you want to convert in. \n\nSpeccy viewer can open:\nscr (6144, 6912), img, mc, mgs, mg8, mg4, mg2, mg1, rgb, ch$ (scr, img, mg4, mg2). \n\nSpeccy Viewer can convert to:\nscr, img, mg4, mg2, ch$ (scr, img, mg4, mg2)."];
+        noDataMessage.text = [NSString stringWithFormat:@"Welcome to Speccy Viewer! \n\nTo open an ZX Spectrum image please use 'Open in...' menu in Safari/Mail/Any app or just open it from your Dropbox. \n\nAlso you can convert PNG images to ZX Spectrum format. Just open a PNG from your Dropbox folder and select mode you want to convert in. \n\nSpeccy viewer can open:\nscr (6144, 6912), img, mc, mgs, mg8, mg4, mg2, mg1, rgb, ch$ (scr, img, mg4, mg2). \n\nSpeccy Viewer can convert to:\nscr, img, mg4, mg2, ch$ (scr, img, mg4, mg2)."];
         [self.view addSubview:noDataMessage];
         
 
