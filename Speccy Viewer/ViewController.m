@@ -533,10 +533,11 @@
 
 #pragma mark - The Rest
 
+
 -(void)checkingForFileSize {
     
     //    currentData =  [NSData dataWithContentsOfURL:givenScreen.link];
-//    isLoadedFilePNG=YES;
+//    isLoadedFilePNG=NO;
 //    currentData =  [NSData dataWithContentsOfURL:[NSURL URLWithString :@"https://www.dropbox.com/s/b0nhclsiujcdbxp/13.png?raw=1"]];
     //    [self convert6912Screen:2];
     
@@ -554,6 +555,19 @@
     
     if (appDelegate.IncomingURL != nil) {
         currentData = [NSData dataWithContentsOfURL:appDelegate.IncomingURL];
+        
+        NSString *cset = @".png";
+        NSRange range = [appDelegate.IncomingURL.path rangeOfString:cset];
+        NSString *cset2 = @".PNG";
+        NSRange range2 = [appDelegate.IncomingURL.path rangeOfString:cset2];
+        if (range.location == NSNotFound && range2.location == NSNotFound) {
+            isLoadedFilePNG = NO;
+        } else {
+            isLoadedFilePNG = YES;
+        }
+        
+        appDelegate.IncomingURL = nil;
+        
     }
     
     incomingFileSize = [currentData length];
@@ -996,7 +1010,7 @@ loadMetadataFailedWithError:(NSError *)error {
     [[DBChooser defaultChooser] openChooserForLinkType:DBChooserLinkTypeDirect fromViewController:self
                                             completion:^(NSArray *results)
      {
-         isDropboxActive=YES;
+         isDropboxActive = YES;
          if ([results count]) {
              
              // url
@@ -1035,6 +1049,7 @@ loadMetadataFailedWithError:(NSError *)error {
              else
              {
                  //If not linked then start linking here..
+                 
                  [[DBSession sharedSession] linkFromController:self];
              }
 
