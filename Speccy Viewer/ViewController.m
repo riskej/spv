@@ -964,6 +964,12 @@
 
 
 - (void)didPressLink {
+    
+    if (self.restClient == nil) {
+    self.restClient = [[DBRestClient alloc] initWithSession:[DBSession sharedSession]];
+    self.restClient.delegate = self;
+    }
+    
     if (![[DBSession sharedSession] isLinked]) {
         [[DBSession sharedSession] linkFromController:self];
     }
