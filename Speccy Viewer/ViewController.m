@@ -356,19 +356,19 @@
 - (void)menuForSelectingModeToConvertFromPNG {
     
     CNPGridMenuItem *i01 = [[CNPGridMenuItem alloc] init];
-    i01.icon = [UIImage imageNamed:@"btn_savePNG@2x"];
+    i01.icon = [UIImage imageNamed:@"btn_save@2x.png"];
     i01.title = @"Convert to SCR";
     
     CNPGridMenuItem *i02 = [[CNPGridMenuItem alloc] init];
-    i02.icon = [UIImage imageNamed:@"btn_saveSCR@2x"];
+    i02.icon = [UIImage imageNamed:@"btn_save@2x.png"];
     i02.title = @"Convert to IMG";
     
     CNPGridMenuItem *i03 = [[CNPGridMenuItem alloc] init];
-    i03.icon = [UIImage imageNamed:@"btn_openfile@2x.png"];
+    i03.icon = [UIImage imageNamed:@"btn_save@2x.png"];
     i03.title = @"Convert to MG4";
     
     CNPGridMenuItem *i04 = [[CNPGridMenuItem alloc] init];
-    i04.icon = [UIImage imageNamed:@"btn_share@2x"];
+    i04.icon = [UIImage imageNamed:@"btn_save@2x.png"];
     i04.title = @"Convert to MG2";
     
     CNPGridMenu *gridMenu2 = [[CNPGridMenu alloc] initWithMenuItems:@[i01, i02, i03, i04]];
@@ -423,6 +423,14 @@
         else if ([item.title isEqual: @"Share Image"])
             [self shareImage];
         
+        
+        else if ([item.title isEqual: @"About"]) {
+
+//        self.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.79 alpha:1];
+//        [self.view bringSubviewToFront:noDataMessage];
+        
+        }
+        
         else if ([item.title isEqual: @"Save *.png \nto Dropbox"]) {
             
             [self didPressLink];
@@ -466,30 +474,33 @@
             
             [self didPressLink];
             
-            if (newData != nil) {
+            if (currentData != nil) {
                 
-                NSData *noflicImageData = newData;
-                NSUInteger imageSize = [newData length];
+                NSData *noflicImageData = currentData;
+                NSUInteger imageSize = [currentData length];
                 
                 if (imageSize >= 6912 && imageSize <= 18688) {
                     
                     NSString *filename;
                     
-                    if (modeToConvertFromPNG == 2) {
+                    if (/*modeToConvertFromPNG == 2 ||*/ imageSize == 6912) {
                         filename = @"Picture.scr";
                     }
                     
-                    else if (modeToConvertFromPNG == 3) {
+                    else if (/*modeToConvertFromPNG == 3 ||*/ imageSize == 13824) {
                         filename = @"Picture.img";
                     }
                     
-                    else if (modeToConvertFromPNG == 5) {
+                    else if (/*modeToConvertFromPNG == 5 ||*/ imageSize == 15616) {
                         filename = @"Picture.mg4";
                     }
                     
-                    else if (modeToConvertFromPNG == 6) {
+                    else if (/*modeToConvertFromPNG == 6 ||*/ imageSize == 18688) {
                         filename = @"Picture.mg2";
                     }
+                    
+//                    else
+//                        filename = @"Picture.scr";
                     
                     
                     NSString *localDir = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
@@ -586,22 +597,23 @@
         self.view.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0.79 alpha:1];
         
 
-        noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        noDataMessage = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 280, self.view.frame.size.height-60)];
         noDataMessage.textColor = [UIColor whiteColor];
         noDataMessage.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:14];
         noDataMessage.textAlignment = NSTextAlignmentCenter;
+        noDataMessage.center = CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
         noDataMessage.numberOfLines = 0;
-        noDataMessage.text = [NSString stringWithFormat:@"Please use 'Open in...' menu \nin order to open an ZX Spectrum image."];
+        noDataMessage.text = [NSString stringWithFormat:@"Welcome to Speccy Viewer! \n\nTo open an ZX Spectrum image please use 'Open in...' menu in Safari/Mail/Any app or just open it from your Dropbox. \n\nAlso you can convert PNG images to ZX Spectrum format. Just open a PNG from your Dropbox folder and select mode you want to convert in. \n\nSpeccy viewer can open:\nscr (6144, 6912), img, mc, mgs, mg8, mg4, mg2, mg1, rgb, ch$ (scr, img, mg4, mg2). \n\nSpeccy Viewer can convert to:\nscr, img, mg4, mg2, ch$ (scr, img, mg4, mg2)."];
         [self.view addSubview:noDataMessage];
         
 
-        noDataMessage2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height+80)];
-        noDataMessage2.textColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8];
-        noDataMessage2.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
-        noDataMessage2.textAlignment = NSTextAlignmentCenter;
-        noDataMessage2.numberOfLines = 0;
-        noDataMessage2.text = [NSString stringWithFormat:@"You can view standard modes \nas well as multicolor, gigascreen & multigigascreen."];
-        [self.view addSubview:noDataMessage2];
+//        noDataMessage2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height+80)];
+//        noDataMessage2.textColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8];
+//        noDataMessage2.font = [UIFont fontWithName:@"HelveticaNeue-Thin" size:14];
+//        noDataMessage2.textAlignment = NSTextAlignmentCenter;
+//        noDataMessage2.numberOfLines = 0;
+//        noDataMessage2.text = [NSString stringWithFormat:@"You can view standard modes \nas well as multicolor, gigascreen & multigigascreen."];
+//        [self.view addSubview:noDataMessage2];
         
         // modes =  1 - 6144
         //          2 - 6912
@@ -776,9 +788,7 @@
 //    image01 = imageForNoflicDemonstration01;
 //    image02 = imageForNoflicDemonstration02;
     
-    if (isLoadedFilePNG) {
-        currentData = newData;
-    }
+
     
     screenToShow = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-inputScreenWidth/2, self.view.center.y-inputScreenHeight/2, inputScreenWidth, inputScreenHeight)];
     if (!is6912Image)
@@ -820,6 +830,10 @@
 
 
 -(void) showFlickeringPicture {
+    
+    if (isLoadedFilePNG) {
+        currentData = newData;
+    }
     
     flickerImages = [[UIImageView alloc] initWithFrame:CGRectMake(self.view.center.x-inputScreenWidth/2, self.view.center.y-inputScreenHeight/2, inputScreenWidth, inputScreenHeight)];
 

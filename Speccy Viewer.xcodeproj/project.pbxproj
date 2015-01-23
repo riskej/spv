@@ -38,6 +38,7 @@
 		845828AC1A678E9A00ADF466 /* specview03-14.png in Resources */ = {isa = PBXBuildFile; fileRef = 845828A11A678E9A00ADF466 /* specview03-14.png */; };
 		845828AD1A678E9A00ADF466 /* specview03-15.png in Resources */ = {isa = PBXBuildFile; fileRef = 845828A21A678E9A00ADF466 /* specview03-15.png */; };
 		845828AE1A678E9A00ADF466 /* specview03-16.png in Resources */ = {isa = PBXBuildFile; fileRef = 845828A31A678E9A00ADF466 /* specview03-16.png */; };
+		84912B8C1A72B71500390486 /* btn_save@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84912B8B1A72B71500390486 /* btn_save@2x.png */; };
 		BF1891AD1A671E4E00862693 /* DBChooser.bundle in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1891AA1A671E4E00862693 /* DBChooser.bundle */; };
 		BF1891AE1A671E4E00862693 /* DBChooser.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1891AB1A671E4E00862693 /* DBChooser.framework */; };
 		BF1891AF1A671E4E00862693 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF1891AC1A671E4E00862693 /* DropboxSDK.framework */; };
@@ -93,6 +94,7 @@
 		845828A11A678E9A00ADF466 /* specview03-14.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "specview03-14.png"; path = "Files/_splash/specview03-14.png"; sourceTree = SOURCE_ROOT; };
 		845828A21A678E9A00ADF466 /* specview03-15.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "specview03-15.png"; path = "Files/_splash/specview03-15.png"; sourceTree = SOURCE_ROOT; };
 		845828A31A678E9A00ADF466 /* specview03-16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "specview03-16.png"; path = "Files/_splash/specview03-16.png"; sourceTree = SOURCE_ROOT; };
+		84912B8B1A72B71500390486 /* btn_save@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_save@2x.png"; path = "Files/btn_save@2x.png"; sourceTree = "<group>"; };
 		BF1891AA1A671E4E00862693 /* DBChooser.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = DBChooser.bundle; path = "Speccy Viewer/DBChooser.bundle"; sourceTree = "<group>"; };
 		BF1891AB1A671E4E00862693 /* DBChooser.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DBChooser.framework; path = "Speccy Viewer/DBChooser.framework"; sourceTree = "<group>"; };
 		BF1891AC1A671E4E00862693 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DropboxSDK.framework; path = "Speccy Viewer/DropboxSDK.framework"; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 		0FA615521A5E681700DE7675 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				84912B8B1A72B71500390486 /* btn_save@2x.png */,
 				0F5B9A651A62C17900C3BDC2 /* btn_openfile@2x.png */,
 				0F5B9A5F1A619A0400C3BDC2 /* midway.png */,
 				0F5B9A561A615D2E00C3BDC2 /* btn_saveSCR@2x.png */,
@@ -350,6 +353,7 @@
 				845828A71A678E9A00ADF466 /* specview03-09.png in Resources */,
 				845828AC1A678E9A00ADF466 /* specview03-14.png in Resources */,
 				0F5B9A601A619A0400C3BDC2 /* midway.png in Resources */,
+				84912B8C1A72B71500390486 /* btn_save@2x.png in Resources */,
 				845828A91A678E9A00ADF466 /* specview03-11.png in Resources */,
 				0F28394F1A639ABC0055BD56 /* Images.xcassets in Resources */,
 				845828A61A678E9A00ADF466 /* specview03-08.png in Resources */,
